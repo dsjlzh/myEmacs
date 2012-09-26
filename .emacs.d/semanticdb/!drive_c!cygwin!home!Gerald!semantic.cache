@@ -1,0 +1,53 @@
+;; Object Gerald/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "Gerald/"
+  :tables (list 
+   (semanticdb-table "fakeclient.py"
+    :major-mode 'python-mode
+    :tags 
+        '( ("socket" include nil nil [1 14])
+            ("traceback" include nil nil [15 31])
+            ("time" include nil nil [32 43])
+            ("logging" include nil nil [44 58])
+            ("struct" include nil nil [59 72])
+            ("sys" include nil nil [73 83])
+            ("errno" include nil nil [84 96])
+            ("thread" include nil nil [97 110])
+            ("logging" code nil nil [112 356])
+            ("hexdump" function (:arguments 
+              ( ("src" variable nil (reparse-symbol function_parameters) [371 374])
+                ("width" variable nil (reparse-symbol function_parameters) [376 381]))              ) nil [358 737])
+            ("msg" function (:arguments 
+              ( ("message" variable nil (reparse-symbol function_parameters) [746 753]))              ) nil [738 802])
+            ("FakeClient" type
+               (:members 
+                  ( ("__init__" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [840 844])
+                        ("host" variable nil (reparse-symbol function_parameters) [846 850])
+                        ("port" variable nil (reparse-symbol function_parameters) [852 856]))                      ) (reparse-symbol indented_block_body) [827 931])
+                    ("connect" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [948 952]))                      ) (reparse-symbol indented_block_body) [936 1363])
+                    ("reconnect" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [1382 1386]))                      ) (reparse-symbol indented_block_body) [1368 1643])
+                    ("sendIdentifyPacket" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [1671 1675]))                      ) (reparse-symbol indented_block_body) [1648 2032])
+                    ("sendHeartPacket" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [2057 2061]))                      ) (reparse-symbol indented_block_body) [2037 2376])
+                    ("recvCommand" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [2397 2401]))                      ) (reparse-symbol indented_block_body) [2381 2839])
+                    ("start" function (:arguments 
+                      ( ("self" variable nil (reparse-symbol function_parameters) [2854 2858]))                      ) (reparse-symbol indented_block_body) [2844 3612]))                  
+                :type "class")
+                nil [803 3612])
+            ("if" code nil nil [3613 3799]))          
+    :file "fakeclient.py"
+    :pointmax 3801
+    :fsize 3925
+    :lastmodtime '(20566 45370)
+    :unmatched-syntax 'nil
+    )
+   )
+  :file "!drive_c!cygwin!home!Gerald!semantic.cache"
+  :semantic-tag-version "2.0"
+  :semanticdb-version "2.0"
+  )
