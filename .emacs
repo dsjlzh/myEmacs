@@ -5,14 +5,14 @@
  ;; If there is more than one, they won't work right.
  '(display-time-mode nil)
  '(ipython-complete-use-separate-shell-p t)
- '(pdb-path (quote d:/Python27/Lib/pdb.py))
+ '(menu-bar-mode nil)
+ '(pdb-path (quote d:/Python27/Lib/pdb\.py))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80)))
- '(tool-bar-mode nil)
- '(menu-bar-mode nil))
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -30,15 +30,15 @@
 (add-to-list 'load-path "~/.emacs.d/") 
 
 ;; exec-path
-(if (file-directory-p "c:/cygwin/bin")
-    (add-to-list 'exec-path "c:/cygwin/bin"))
+;; (if (file-directory-p "c:/cygwin/bin")
+;;     (add-to-list 'exec-path "c:/cygwin/bin"))
 
 ;; Function keys
 ; 折叠代码快捷键
 (global-set-key [f1] 'hs-toggle-hiding)
 (global-set-key [f2] 'info)
 (global-set-key [f9] 'semantic-ia-fast-jump)
-(global-set-key [f10] 'w32-maximize-frame)
+(global-set-key [f10] 'my-maximize-frame)
 (global-set-key [f11] 'loop-alpha)
 (global-set-key [f12] 'my-theme-cycle)
 (global-set-key "\C-x\C-m" 'execute-extended-command)
@@ -47,6 +47,8 @@
 (defalias 'qrr 'query-replace-regexp)
 
 ;; C++ and C mode...
+(add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
+
 (defun my-c++-mode-hook ()
   (setq tab-width 4)
   (define-key c++-mode-map "\C-m" 'reindent-then-newline-and-indent)
@@ -99,25 +101,16 @@
 ;; (semantic-load-enable-excessive-code-helpers)
 (semantic-load-enable-semantic-debugging-helpers)
 
-;; build-in cedet 
-;; (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
-;;                                   global-semanticdb-minor-mode
-;;                                   global-semantic-idle-summary-mode
-;;                                   global-semantic-mru-bookmark-mode))
-;; (semantic-mode t)
-;; (global-semantic-highlight-edits-mode (if window-system 1 -1))
-;; (global-semantic-show-unmatched-syntax-mode 1)
-;; (global-semantic-show-parser-state-mode 1)
-;; (require 'semantic/analyze/refs)
-
 (setq semanticdb-project-roots (list (expand-file-name "/")))
 (defconst cedet-user-include-dirs
   (list ".." "../include" "../inc" "../common" "../public"
         "../.." "../../include" "../../inc" "../../common" "../../public"))
 
-(defconst cedet-win32-include-dirs
-  (list "C:/cygwin/lib/gcc/i686-pc-cygwin/3.4.4/include"
-        "C:/Program Files/Microsoft Visual Studio 9.0/VC/include"))
+(if (eq system-type 'windows-nt)
+    (defconst cedet-win32-include-dirs
+      (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
+	    "C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
+	    "C:/Program Files/Microsoft SDKs/Windows/v7.0/Include")))
 
 ;; (require 'semantic-c nil 'noerror)
 (let ((include-dirs cedet-user-include-dirs))
@@ -136,7 +129,7 @@
 
 ;; enable ctags for some languages:
 ;; Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
-(setq semantic-ectag-program "C:/cygwin/usr/local/bin/ctags.exe")
+;; (setq semantic-ectag-program "path_to_ctags")
 (when (cedet-ectag-version-check)
   (semantic-load-enable-primary-exuberent-ctags-support))
 
@@ -200,6 +193,12 @@
   (local-set-key ">" 'semantic-complete-self-insert))
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
+;; ECB					
+(add-to-list 'load-path "~/.emacs.d/ecb-2.40/")
+(require 'ecb)
+(require 'ecb-autoloads)
+(setq stack-trace-on-error t) 
+
 ;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
@@ -256,9 +255,10 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
                         charset
                         zh-font))))
 
-(qiang-set-font
- '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=14"
- '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
+(if (not (eq system-type 'cygwin))
+    (qiang-set-font
+     '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=14"
+     '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体")))
 
 ;; 启动时自动最大化
 (defun w32-restore-frame () 
@@ -271,8 +271,32 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
   (interactive) 
   (w32-send-sys-command 61488)) 
 
-;; (w32-restore-frame)
-(w32-maximize-frame) 
+(defun linux-fullscreen ()
+  (interactive)
+  (x-send-client-message
+   nil 0 nil "_NET_WM_STATE" 32
+   '(2 "_NET_WM_STATE_FULLSCREEN" 0))
+  )
+
+(defun linux-maximize-frame ()
+  (interactive)
+  (x-send-client-message
+   nil 0 nil "_NET_WM_STATE" 32
+   '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
+  (x-send-client-message
+   nil 0 nil "_NET_WM_STATE" 32
+   '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
+  )
+
+;; (maximize-frame)
+(defun my-maximize-frame ()
+     (if (eq system-type 'windows-nt) 
+	 (w32-maximize-frame))
+     (if (eq system-type 'gnu/linux) 
+	 (linux-maximize-frame))
+     )
+
+(my-maximize-frame)
 
 ;; Smart copy, if no region active, it simply copy the current whole line
 (defadvice kill-line (before check-position activate)
@@ -350,7 +374,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 ;; highlight-symbol
 (require 'highlight-symbol)
-
 (global-set-key [(control f3)] 'highlight-symbol-at-point)
 (global-set-key [f3] 'highlight-symbol-next)
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
@@ -442,16 +465,14 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (funcall (car theme-current))
   (message "%S" (car theme-current)))
 
-(setq my-color-themes (list 'color-theme-calm-forest 'color-theme-clarity
+(setq my-color-themes (list 'color-theme-blackboard 'color-theme-calm-forest 
+			    'color-theme-clarity
 			    'color-theme-dark-green 'color-theme-dark-laptop
-			    'color-theme-classic 'color-theme-jonadabian-slate
 			    'color-theme-deep-blue 'color-theme-lethe
-			    'color-theme-hober 'color-theme-euphoria
-			    'color-theme-sitaramv-nt 'color-theme-wheat
-			    'color-theme-blackboard))
+			    'color-theme-hober 'color-theme-euphoria))
+
 (setq theme-current my-color-themes)
 (setq color-theme-is-global nil) ; Initialization
-
 
 ;; pymacs
 (autoload 'pymacs-apply "pymacs")
@@ -489,25 +510,26 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (define-key ac-completing-map "\M-/" 'ac-stop)
 
 ;; cygwin
-(setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
-(setq exec-path (cons "c:/cygwin/bin/" exec-path))
-(require 'cygwin-mount)
-(cygwin-mount-activate)
+(if (eq system-type 'windows-nt)
+    (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
+    (setq exec-path (cons "c:/cygwin/bin/" exec-path))
+    (require 'cygwin-mount)
+    (cygwin-mount-activate)
 
-(add-hook 'comint-output-filter-functions
-	  'Shell-strip-ctrl-m nil t)
-(add-hook 'comint-output-filter-functions
-	  'comint-watch-for-password-prompt nil t)
-(setq explicit-shell-file-name "bash.exe")
-;; For subprocesses invoked via the shell
-;; (e.g., "shell -c command")
-(setq shell-file-name explicit-shell-file-name)
-(put 'upcase-region 'disabled nil)
+    (add-hook 'comint-output-filter-functions
+	      'Shell-strip-ctrl-m nil t)
+    (add-hook 'comint-output-filter-functions
+	      'comint-watch-for-password-prompt nil t)
+    (setq explicit-shell-file-name "bash.exe")
+    ;; For subprocesses invoked via the shell
+    ;; (e.g., "shell -c command")
+    (setq shell-file-name explicit-shell-file-name)
+    (put 'upcase-region 'disabled nil))
 
 ;; transparent, set alpha
-(set-frame-parameter (selected-frame) 'alpha '(85 55))
+;; (set-frame-parameter (selected-frame) 'alpha '(100 100))
 ;; you can define your alpha-list to set the transform 
-(setq alpha-list '((100 100) (85 55) (75 55) (65 55) (55 55)))
+(setq alpha-list '((100 100) (100 85) (85 75) (75 65) (65 55) (55 45) (45 35)))
 
 (defun loop-alpha ()
   (interactive)
