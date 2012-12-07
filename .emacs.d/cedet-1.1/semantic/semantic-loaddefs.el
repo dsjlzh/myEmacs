@@ -4110,12 +4110,12 @@ Setup buffer for parse.
 ;;;;;;  "wisent/wisent-python.el" (20362 59692))
 ;;; Generated autoloads from wisent/wisent-python.el
 
-(autoload 'wisent-python-default-setup "wisent/wisent-python" "\
-Setup buffer for parse.
+;; (autoload 'wisent-python-default-setup "wisent/wisent-python" "\
+;; Setup buffer for parse.
 
-\(fn)" nil nil)
+;; \(fn)" nil nil)
 
-(add-hook 'python-mode-hook 'wisent-python-default-setup)
+;; (add-hook 'python-mode-hook 'wisent-python-default-setup)
 
 ;;;***
 
