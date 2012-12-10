@@ -1,6 +1,108 @@
 Python Mode News
 ================
 
+New in version 6.1.0
+---------------------
+
+- py-up 
+  Go to beginning one level above of compound statement or definition at point.
+- py-down
+  Go to beginning one level below of compound statement or definition at point.
+
+- Customizable output directory 
+  After checking for a remote shell, the following variables are consulted:
+
+  py-use-current-dir-when-execute-p, default t
+  When `t', current directory is used by Python-shell for output of `py-execute-buffer' and related commands
+
+  py-fileless-buffer-use-default-directory-p, default t
+  When `py-use-current-dir-when-execute-p' is non-nil and no buffer-file exists, value of `default-directory' sets current working directory of Python output shell"
+
+  py-keep-shell-dir-when-execute-p, default nil
+  Don't change Python shell's current working directory when sending code.
+
+  `py-execute-directory', default nil
+
+  If nothing was set so far, $VIRTUAL_ENV and $HOME are queried.
+
+- Set of commands calling Python3.3
+
+- fill docstrings according to style, commands 
+  py-fill-string-django
+  py-fill-string-onetwo
+  py-fill-string-pep-257
+  py-fill-string-pep-257-nn
+  py-fill-string-symmetric
+
+  Customizable variable `py-fill-docstring-style' provides default value
+  used by `py-fill-string', `py-fill-paragraph'
+
+  DJANGO:
+
+      \"\"\"
+      Process foo, return bar.
+      \"\"\"
+
+      \"\"\"
+      Process foo, return bar.
+
+      If processing fails throw ProcessingError.
+      \"\"\"
+
+  ONETWO:
+
+      \"\"\"Process foo, return bar.\"\"\"
+
+      \"\"\"
+      Process foo, return bar.
+
+      If processing fails throw ProcessingError.
+
+      \"\"\"
+
+  PEP-257:
+
+      \"\"\"Process foo, return bar.\"\"\"
+
+      \"\"\"Process foo, return bar.
+
+      If processing fails throw ProcessingError.
+
+      \"\"\"
+
+  PEP-257-NN:
+
+      \"\"\"Process foo, return bar.\"\"\"
+
+      \"\"\"Process foo, return bar.
+
+      If processing fails throw ProcessingError.
+      \"\"\"
+
+  SYMMETRIC:
+
+      \"\"\"Process foo, return bar.\"\"\"
+
+      \"\"\"
+      Process foo, return bar.
+
+      If processing fails throw ProcessingError.
+      \"\"\""
+
+  Built upon code seen at python.el, thanks Fabian
+
+- `py-down-statement', `py-up-statement'
+
+- toggle-py-split-windows-on-execute-p
+- py-split-windows-on-execute-p-off
+- py-split-windows-on-execute-p-on
+
+- toggle-py-switch-buffers-on-execute-p
+- py-switch-buffers-on-execute-p-on
+- py-switch-buffers-on-execute-p-off
+
+- `py-shell-switch-buffers-on-execute-p' renamed `py-switch-buffers-on-execute-p'
+
 New in version 6.0.12
 ---------------------
 

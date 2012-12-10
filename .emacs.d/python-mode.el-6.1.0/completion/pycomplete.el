@@ -17,7 +17,12 @@
 ;; symbols within the current buffer.  See pycomplete.py for the Python side
 ;; of things and a short description of what to expect.
 
-(require 'pymacs)
+;; BAW 2012-09-28: pymacs may not be installed on Debian.
+(condition-case nil
+    (require 'pymacs)
+  (file-error nil))
+
+(eval-when-compile (require 'cl))
 
 (pymacs-load "pycomplete")
 
@@ -403,7 +408,10 @@ Should be called from python-mode-hook. Keys are set when
   (cond
    ((fboundp 'auto-complete-mode)
     (require 'auto-complete-pycomplete)
-    (setq ac-sources '(ac-source-pycomplete)))
+    (setq ac-sources
+          (if (boundp 'py-complete-ac-sources)
+              py-complete-ac-sources
+            '(ac-source-pycomplete))))
    ((fboundp 'company-mode)
     (company-mode t)
     (require 'company-pycomplete)
