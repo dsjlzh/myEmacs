@@ -1,3 +1,4 @@
+(setq debug-on-error t)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -19,15 +20,19 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(py-number-face ((t (:inherit font-lock-constant-face))))
- '(py-variable-name-face ((t (:inherit font-lock-variable-name-face)))))
+ '(py-variable-name-face ((t (:inherit font-lock-variable-name-face))))
+ '(semantic-unmatched-syntax-face ((t nil))))
+
+(if (eq system-type 'windows-nt)
+    (menu-bar-mode t))
 
 ;; server mode
 (server-mode 1)
 
-;;;; cedet					
-;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/") 
+;;;; cedet
+;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
 ;; (add-to-list 'load-path "~/.emacs.d/cedet/speedbar")
-;; (add-to-list 'load-path "~/.emacs.d/cedet/eieio") 
+;; (add-to-list 'load-path "~/.emacs.d/cedet/eieio")
 ;; (add-to-list 'load-path "~/.emacs.d/cedet/semantic")
 (load-file "~/.emacs.d/cedet/common/cedet.elc")
 (load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
@@ -90,6 +95,8 @@
         ("m" . ("h"))
         ("mm" . ("h"))))
 
+(setq tags-table-list
+      '("~/.emacs.d" "~/tmp" ))
 ;; (setq libutil-project
 ;;       (ede-cpp-root-project "libutil"
 ;;                             :file "~/projects/libutil/configure.in"
@@ -163,6 +170,7 @@
 ; 折叠代码快捷键
 (global-set-key [f1] 'hs-toggle-hiding)
 (global-set-key [f2] 'info)
+(global-set-key [f4] 'toggle-menu-bar-mode-from-frame)
 (global-set-key [f9] 'semantic-ia-fast-jump)
 (global-set-key [f11] 'loop-alpha)
 (global-set-key [f12] 'my-theme-cycle)
@@ -197,7 +205,7 @@
 ;;(setq ropemacs-local-prefix "C-c C-p")
 
 ;; python-mode
-(add-to-list 'load-path "~/.emacs.d/python-mode/") 
+(add-to-list 'load-path "~/.emacs.d/python-mode/")
 (add-to-list 'load-path "~/.emacs.d/python-mode/completion/")
 (setq py-install-directory "~/.emacs.d/python-mode/")
 (setq py-load-pymacs-p t)
@@ -241,11 +249,11 @@
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 
-;; ECB					
+;; ECB
 (add-to-list 'load-path "~/.emacs.d/ecb-2.40/")
 (require 'ecb)
 (require 'ecb-autoloads)
-(setq stack-trace-on-error t) 
+(setq stack-trace-on-error t)
 
 ;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -268,7 +276,7 @@
       nil t))
 
 (defun qiang-make-font-string (font-name font-size)
-  (if (and (stringp font-size) 
+  (if (and (stringp font-size)
            (equal ":" (string (elt font-size 0))))
       (format "%s%s" font-name font-size)
     (format "%s %s" font-name font-size)))
@@ -285,9 +293,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
                   english-font-size))
         (zh-font (font-spec :family (find-if #'qiang-font-existsp chinese-fonts)
                             :size chinese-font-size)))
-    
+
     ;; Set the default English font
-    ;; 
+    ;;
     ;; The following 2 method cannot make the font settig work in new frames.
     ;; (set-default-font "Consolas:pixelsize=18")
     ;; (add-to-list 'default-frame-alist '(font . "Consolas:pixelsize=18"))
@@ -295,8 +303,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
     (message "Set English Font to %s" en-font)
     (set-face-attribute
      'default nil :font en-font)
-    
-    ;; Set Chinese font 
+
+    ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
     (message "Set Chinese Font to %s" zh-font)
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
@@ -310,15 +318,15 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
      '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体")))
 
 ;; 启动时自动最大化
-(defun w32-restore-frame () 
-  "Restore a minimized frame" 
-  (interactive) 
-  (w32-send-sys-command 61728)) 
+(defun w32-restore-frame ()
+  "Restore a minimized frame"
+  (interactive)
+  (w32-send-sys-command 61728))
 
-(defun w32-maximize-frame () 
-  "Maximize the current frame" 
-  (interactive) 
-  (w32-send-sys-command 61488)) 
+(defun w32-maximize-frame ()
+  "Maximize the current frame"
+  (interactive)
+  (w32-send-sys-command 61488))
 
 (defun linux-fullscreen ()
   (interactive)
@@ -339,9 +347,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 ;; (maximize-frame)
 (defun my-maximize-frame ()
-     (if (eq system-type 'windows-nt) 
+     (if (eq system-type 'windows-nt)
 	 (w32-maximize-frame))
-     (if (eq system-type 'gnu/linux) 
+     (if (eq system-type 'gnu/linux)
 	 (linux-maximize-frame))
      )
 
@@ -432,7 +440,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; nasl-mode
 (require 'nasl-mode)
 
-;;;; org-mode
+;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
 (global-set-key "\C-cl" 'org-store-link)
@@ -488,7 +496,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
 
 ;; color-theme
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/") 
+(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
@@ -505,7 +513,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (message "%s" (car theme-current)))
 
 ;; Set the next theme (fixed by Chris Webber - tanks)
-(defun my-theme-cycle ()		
+(defun my-theme-cycle ()
   (interactive)
   (setq theme-current (cdr theme-current))
   (if (null theme-current)
@@ -513,26 +521,19 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (funcall (car theme-current))
   (message "%S" (car theme-current)))
 
-(setq my-color-themes (list 'color-theme-blackboard 'color-theme-calm-forest 
-			    'color-theme-clarity 'color-theme-dark-green 
-			    'color-theme-dark-laptop 'color-theme-deep-blue 
-			    'color-theme-lethe 'color-theme-hober 
+(setq my-color-themes (list 'color-theme-blackboard 'color-theme-calm-forest
+			    'color-theme-clarity 'color-theme-dark-green
+			    'color-theme-dark-laptop 'color-theme-deep-blue
+			    'color-theme-lethe 'color-theme-hober
 			    'color-theme-euphoria))
 
 (setq theme-current my-color-themes)
 (setq color-theme-is-global nil) ; Initialization
 
 ;; yasnippet
-;; (add-to-list 'load-path "~/.emacs.d/yasnippet-0.6.1c/")
-;; (require 'yasnippet-bundle)
-;; (setq yas/root-directory "~/.emacs.d/yasnippet-0.6.1c/snippets/")
-;; (yas/load-directory yas/root-directory)
-;; (require 'dropdown-list)
-;; (setq yas/prompt-functions '(yas/dropdown-prompt
-;;                              yas/ido-prompt
-;;                              yas/completing-prompt))
 (add-to-list 'load-path "~/.emacs.d/yasnippet")
 (require 'yasnippet)
+(setq yas-snippet-dirs "~/.emacs.d/yasnippet/snippets/")
 (yas-global-mode 1)
 
 ;; Icicles
@@ -563,7 +564,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 ;; transparent, set alpha
 (set-frame-parameter (selected-frame) 'alpha '(75 65))
-;; you can define your alpha-list to set the transform 
+;; you can define your alpha-list to set the transform
 (setq alpha-list '((100 100) (100 85) (85 75) (75 65) (65 55) (55 45) (45 35)))
 
 (defun loop-alpha ()
@@ -594,3 +595,5 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (setq save-abbrevs t)
 (if (file-exists-p abbrev-file-name)
     (quietly-read-abbrev-file))
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
