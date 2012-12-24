@@ -1,12 +1,14 @@
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(display-time-mode nil)
+ '(ecb-layout-window-sizes nil)
+ '(ecb-options-version "2.40")
+ '(fill-column 80)
  '(menu-bar-mode nil)
- '(pdb-path (quote d:/Python27/Lib/pdb\.py))
  '(py-shell-name "python")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
@@ -26,14 +28,11 @@
 (if (eq system-type 'windows-nt)
     (menu-bar-mode t))
 
-;; server mode
-(server-mode 1)
+;;;; server mode
+(server-mode t)
 
 ;;;; cedet
 ;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
-;; (add-to-list 'load-path "~/.emacs.d/cedet/speedbar")
-;; (add-to-list 'load-path "~/.emacs.d/cedet/eieio")
-;; (add-to-list 'load-path "~/.emacs.d/cedet/semantic")
 (load-file "~/.emacs.d/cedet/common/cedet.elc")
 (load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
 (global-ede-mode t)
@@ -97,6 +96,7 @@
 
 (setq tags-table-list
       '("~/.emacs.d" "~/tmp" ))
+
 ;; (setq libutil-project
 ;;       (ede-cpp-root-project "libutil"
 ;;                             :file "~/projects/libutil/configure.in"
@@ -114,7 +114,6 @@
     (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
         (setq first (cdr (car (cdr alist)))))
     (semantic-mrub-switch-tags first)))
-
 
 (defun my-cedet-hook ()
   (local-set-key [(control return)] 'semantic-ia-complete-symbol)
@@ -141,7 +140,7 @@
 
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
-;; change current dir to ~/
+;; change dir to home
 (cd "~/")
 
 ;; add .emacs.d to load-path
@@ -155,37 +154,103 @@
 (setq require-final-newline t)
 ;; 当光标在行尾上下移动的时候，始终保持在行尾。
 (setq track-eol t)
-
+;; 显示行号
+(global-linum-mode 1)
 ;; Emacs才是世界上最强大的IDE － 智能的改变光标形状
 ;; http://emacser.com/cursor-change.htm
 (require 'cursor-change)
 (cursor-change-mode 1)
 
-;; Anything
-(add-to-list 'load-path "~/.emacs.d/helm")
-(require 'helm-config)
-(helm-mode t)
-
 ;; Function keys
 ; 折叠代码快捷键
 (global-set-key [f1] 'hs-toggle-hiding)
 (global-set-key [f2] 'info)
+(global-set-key [f3] 'highlight-symbol-next)
 (global-set-key [f4] 'toggle-menu-bar-mode-from-frame)
+(global-set-key [f6] 'ecb-toggle-ecb-windows)
+(global-set-key [f7] `fill-region)
+(global-set-key [f8] 'auto-fill-mode)
 (global-set-key [f9] 'semantic-ia-fast-jump)
-(global-set-key [f11] 'loop-alpha)
+(global-set-key [f10] 'loop-alpha)
+(global-set-key [f11] 'toggle-full-screen)
 (global-set-key [f12] 'my-theme-cycle)
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
 (defalias 'qrr 'query-replace-regexp)
 
+;; move line up or down
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2))
+
+(defun move-line-down ()
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1))
+
+(global-set-key (kbd "M-<up>") 'move-line-up)
+(global-set-key (kbd "M-<down>") 'move-line-down)
+
+;; copy line from above
+(autoload 'copy-from-above-command "misc"
+  "Copy characters from previous nonblank line, starting just above point.
+   \(fn &optional arg)"
+  'interactive)
+
+(global-set-key (kbd "C-M-<up>") 'copy-from-above-command)
+(global-set-key (kbd "C-M-<down>") (lambda ()
+				     (interactive)
+				     (forward-line 1)
+				     (open-line 1)
+				     (copy-from-above-command)))
+
+;; Calendar
+(require 'calendar)
+(defun insdate-insert-current-date (&optional omit-day-of-week-p)
+  "Insert today's date using the current locale.
+  With a prefix argument, the date is inserted without the day of
+  the week."
+  (interactive "P*")
+  (insert (calendar-date-string (calendar-current-date) nil
+				omit-day-of-week-p)))
+
+(global-set-key "\C-x\M-d" `insdate-insert-current-date)
+
+;; auto fill mode
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+;; package management
+(when (> emacs-major-version 23)
+  (require 'package)
+  (package-initialize)
+  ;; add the user-contributed repository
+  (add-to-list 'package-archives
+	       '("elpa" . "http://tromey.com/elpa/"))
+  (add-to-list 'package-archives
+	       '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives
+	       '("melpa" . "http://melpa.milkbox.net/packages/")
+	       'APPEND))
+
 ;; auto-complete
-(add-to-list 'load-path "~/.emacs.d/auto-complete-1.3.1/")
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete-1.3.1/dict/")
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict/")
 (ac-config-default)
 (setq ac-auto-show-menu 0.5)
 (define-key ac-completing-map "\M-/" 'ac-stop)
+
+;; Icicles
+;; (add-to-list 'load-path "~/.emacs.d/icicles")
+(require 'icicles)
+(icy-mode t)
+
+;; autopair
+(require 'autopair)
+(autopair-global-mode)
 
 ;; pymacs
 (autoload 'pymacs-apply "pymacs")
@@ -201,6 +266,8 @@
 (require 'pymacs)
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)
+(setq ropemacs-autoimport-modules t)
+(setq ropemacs-use-pop-to-buffer t)
 ;;(setq ropemacs-enable-shortcuts nil)
 ;;(setq ropemacs-local-prefix "C-c C-p")
 
@@ -210,6 +277,7 @@
 (setq py-install-directory "~/.emacs.d/python-mode/")
 (setq py-load-pymacs-p t)
 (setq py-smart-operator-mode-p nil)
+(setq py-prepare-autopair-mode-p t)
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
@@ -249,25 +317,22 @@
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 
-;; ECB
-(add-to-list 'load-path "~/.emacs.d/ecb-2.40/")
-(require 'ecb)
+;;;; ECB
 (require 'ecb-autoloads)
+(require 'ecb)
 (setq stack-trace-on-error t)
 
-;; lua-mode
+;;;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
-;; 代码折叠
-(add-hook 'c-mode-hook 'hs-minor-mode)
-(add-hook 'c++-mode-hook 'hs-minor-mode)
-(add-hook 'lua-mode-hook 'hs-minor-mode)
-(add-hook 'python-hook 'hs-minor-mode)
-
-;; 显示行号
-(global-linum-mode 1)
+;;;; 代码折叠
+(dolist (hook '(c-mode-hook
+		c++-mode-hook
+		lua-mode-hook
+		python-mode-hook))
+  (add-hook hook (lambda () (hs-minor-mode t))))
 
 ;;;; from http://emacser.com/torture-emacs.htm by qiang
 ;; set font
@@ -317,7 +382,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
      '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=14"
      '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体")))
 
-;; 启动时自动最大化
+;;;; 启动时自动最大化
 (defun w32-restore-frame ()
   "Restore a minimized frame"
   (interactive)
@@ -345,7 +410,6 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
    '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
   )
 
-;; (maximize-frame)
 (defun my-maximize-frame ()
      (if (eq system-type 'windows-nt)
 	 (w32-maximize-frame))
@@ -355,7 +419,16 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (my-maximize-frame)
 
-;; Smart copy, if no region active, it simply copy the current whole line
+;; Full Screen
+(defun toggle-full-screen ()
+  "Toggles full-screen mode for Emacs window on Win32."
+  (interactive)
+  (if (eq system-type 'windows-nt)
+      (shell-command "emacs_fullscreen.exe --topmost"))
+  (if (eq system-type 'gnu/linux)
+      (linux-fullscreen)))
+
+;;;; Smart copy, if no region active, it simply copy the current whole line
 (defadvice kill-line (before check-position activate)
   (if (member major-mode
               '(emacs-lisp-mode scheme-mode lisp-mode
@@ -391,7 +464,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (global-set-key (kbd "M-k") 'qiang-copy-line)
 
-;; comment-dwim
+;;;; comment-dwim
 (defun qiang-comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
 If no region is selected and current line is not blank and we are not at the end of the line,
@@ -405,7 +478,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 (global-set-key "\M-;" 'qiang-comment-dwim-line)
 
-;; Auto format code yanked
+;;;; Auto format code yanked
 (dolist (command '(yank yank-pop))
   (eval
    `(defadvice ,command (after indent-region activate)
@@ -429,18 +502,17 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
              (indent-region (region-beginning) (region-end) nil))))))
 ;;;;
 
-;; highlight-symbol
+;;;; highlight-symbol
 (require 'highlight-symbol)
 (global-set-key [(control f3)] 'highlight-symbol-at-point)
-(global-set-key [f3] 'highlight-symbol-next)
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-remove-all)
 (global-set-key [(control meta f3)] 'highlight-symbol-query-replace)
 
-;; nasl-mode
+;;;; nasl-mode
 (require 'nasl-mode)
 
-;; org-mode
+;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
 (global-set-key "\C-cl" 'org-store-link)
@@ -448,7 +520,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-;; iimage mode
+;;;; iimage mode
 (autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
 (autoload 'turn-on-iimage-mode "iimage" "Turn on Inline image minor mode." t)
 ;; -- Display images in org mode
@@ -458,7 +530,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-to-list 'iimage-mode-image-regex-alist
 	     (cons (concat "\\[\\[file:\\(~?" iimage-mode-image-filename-regex "\\)\\]")  1))
 
-;; add a hook so we can display images on load
+;;;; add a hook so we can display images on load
 ;; (add-hook 'org-mode-hook '(lambda () (org-turn-on-iimage-in-org)))
 
 ;; function to setup images for display on load
@@ -477,7 +549,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     (set-face-underline-p 'org-link t))
   (call-interactively 'iimage-mode))
 
-;; org-remember
+;;;; org-remember
 (org-remember-insinuate)
 (setq org-directory "e:/Gerald/orgfiles")
 (setq org-default-notes-file (concat org-directory "/notes.org"))
@@ -491,12 +563,12 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 	("Private" ?p "\n* %^{topic} %T \n%i%?\n" (concat org-directory "/privnotes.org"))
 	))
 
-;; turn on orgstruct
+;;;; turn on orgstruct
 ;; (add-hook 'text-mode-hook 'turn-on-orgstruct)
 ;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
 
-;; color-theme
-(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
+;;;; color-theme
+;; (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
@@ -530,16 +602,13 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (setq theme-current my-color-themes)
 (setq color-theme-is-global nil) ; Initialization
 
-;; yasnippet
-(add-to-list 'load-path "~/.emacs.d/yasnippet")
+;;;; yasnippet
+;; (add-to-list 'load-path "~/.emacs.d/yasnippet")
 (require 'yasnippet)
-(setq yas-snippet-dirs "~/.emacs.d/yasnippet/snippets/")
+;; (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets/")
 (yas-global-mode 1)
 
-;; Icicles
-(add-to-list 'load-path "~/.emacs.d/icicles")
-
-;; cygwin-mount
+;;;; cygwin-mount
 (if (eq system-type 'windows-nt)
     (progn
       ;; (setq py-shell-name "ipython")
@@ -562,10 +631,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       (put 'upcase-region 'disabled nil)
 ))
 
-;; transparent, set alpha
-(set-frame-parameter (selected-frame) 'alpha '(75 65))
+;;;; transparent, set alpha
+(set-frame-parameter (selected-frame) 'alpha '(100 100))
 ;; you can define your alpha-list to set the transform
-(setq alpha-list '((100 100) (100 85) (85 75) (75 65) (65 55) (55 45) (45 35)))
+(setq alpha-list '((75 65) (100 100)))
 
 (defun loop-alpha ()
   (interactive)
@@ -578,8 +647,8 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     )
   )
 
-;; evernote-mode
-(add-to-list 'load-path "~/.emacs.d/evernote-mode-0_41/")
+;;;; evernote-mode
+;; (add-to-list 'load-path "~/.emacs.d/evernote-mode-0_41/")
 (require 'evernote-mode)
 (setq evernote-username "dsjlzh") ; optional: you can use this username as default.
 (setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
@@ -591,9 +660,12 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key "\C-cep" 'evernote-post-region)
 (global-set-key "\C-ceb" 'evernote-browser)
 
-;; abbrev-mode
+;;;; abbrev-mode
 (setq save-abbrevs t)
+(setq abbrev-file-name "~/.emacs.d/abbrev_defs")
 (if (file-exists-p abbrev-file-name)
     (quietly-read-abbrev-file))
+(setq save-abbrevs t)
+(setq default-abbrev-mode t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
