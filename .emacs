@@ -16,6 +16,7 @@
  '(size-indication-mode t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80)))
  '(tool-bar-mode nil))
+ '(column-number-mode t)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -207,6 +208,38 @@
 				     (open-line 1)
 				     (copy-from-above-command)))
 
+;; pan movement
+(global-set-key '[S-up]     'my-pan-down-1)
+(global-set-key '[S-down]   'my-pan-up-1)
+(global-set-key '[S-left]   'my-pan-right-2)
+(global-set-key '[S-right]  'my-pan-left-2)
+
+(defun my-pan-up-1 ()
+  (interactive)
+  ;; (next-line 1)
+  (scroll-up 1))
+
+(defun my-pan-down-1 ()
+  (interactive)
+  ;; (previous-line 1)
+  (scroll-down 1))
+
+(defun my-pan-left-2 ()
+  (interactive)
+  (forward-char 2)
+  (scroll-left 2))
+
+(defun my-pan-right-2 ()
+  (interactive)
+  (backward-char 2)
+  (scroll-right 2))
+
+;; swap-buffer
+(global-set-key "\M-t"  'my-swap-buffer)
+(defun my-swap-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 'VISIBLE-OK)))
+
 ;; Calendar
 (require 'calendar)
 (defun insdate-insert-current-date (&optional omit-day-of-week-p)
@@ -272,16 +305,45 @@
 ;;(setq ropemacs-local-prefix "C-c C-p")
 
 ;; python-mode
-(add-to-list 'load-path "~/.emacs.d/python-mode/")
-(add-to-list 'load-path "~/.emacs.d/python-mode/completion/")
+;; (add-to-list 'load-path "~/.emacs.d/python-mode/")
 (setq py-install-directory "~/.emacs.d/python-mode/")
 (setq py-load-pymacs-p t)
 (setq py-smart-operator-mode-p nil)
 (setq py-prepare-autopair-mode-p t)
+(setq py-set-complete-keymap-p t)
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 (require 'python-mode)
+
+(add-to-list 'load-path "~/.emacs.d/python-mode/completion/")
+;; (setq ac-sources '(ac-source-pycomplete))
+;; or before the other sources using
+(require 'auto-complete-pycomplete)
+;; (add-to-list 'ac-sources 'ac-source-pycomplete)
+(defun py-load-pycomplete ()
+  "Load Pymacs based pycomplete."
+  (interactive)
+  (let* ((path (getenv "PYTHONPATH"))
+         (py-install-directory (cond ((string= "" py-install-directory)
+                                      (py-guess-py-install-directory))
+                                     (t (py-normalize-directory py-install-directory))))
+         (pycomplete-directory (concat (expand-file-name py-install-directory) "completion")))
+    (if (py-install-directory-check)
+        (progn
+          ;; If the Pymacs process is already running, augment its path.
+          (when (and (get-process "pymacs") (fboundp 'pymacs-exec))
+            (pymacs-exec (concat "sys.path.insert(0, '" pycomplete-directory "')")))
+          (require 'pymacs)
+          (setenv "PYTHONPATH" (concat
+                                pycomplete-directory
+                                (if path (concat path-separator path))))
+          (add-to-list 'load-path pycomplete-directory)
+          (require 'pycomplete)
+          (add-hook 'python-mode-hook 'py-complete-initialize))
+      (error "`py-install-directory' not set, see INSTALL"))))
+
+(py-load-pycomplete)
 
 ;; C++ and C mode...
 (add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
