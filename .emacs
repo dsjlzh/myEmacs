@@ -16,7 +16,6 @@
  '(size-indication-mode t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80)))
  '(tool-bar-mode nil))
- '(column-number-mode t)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -28,6 +27,8 @@
 
 (if (eq system-type 'windows-nt)
     (menu-bar-mode t))
+
+(column-number-mode t)
 
 ;;;; server mode
 (server-mode t)
@@ -167,12 +168,13 @@
 (global-set-key [f1] 'hs-toggle-hiding)
 (global-set-key [f2] 'info)
 (global-set-key [f3] 'highlight-symbol-next)
-(global-set-key [f4] 'toggle-menu-bar-mode-from-frame)
-(global-set-key [f6] 'ecb-toggle-ecb-windows)
+(global-set-key [f4] 'ecb-toggle-ecb-windows)
+(global-set-key [f5] 'compile)
+(global-set-key [f6] 'loop-alpha)
 (global-set-key [f7] `fill-region)
 (global-set-key [f8] 'auto-fill-mode)
 (global-set-key [f9] 'semantic-ia-fast-jump)
-(global-set-key [f10] 'loop-alpha)
+(global-set-key [f10] 'toggle-menu-bar-mode-from-frame)
 (global-set-key [f11] 'toggle-full-screen)
 (global-set-key [f12] 'my-theme-cycle)
 (global-set-key "\C-x\C-m" 'execute-extended-command)
@@ -256,95 +258,6 @@
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 
-;; package management
-(when (> emacs-major-version 23)
-  (require 'package)
-  (package-initialize)
-  ;; add the user-contributed repository
-  (add-to-list 'package-archives
-	       '("elpa" . "http://tromey.com/elpa/"))
-  (add-to-list 'package-archives
-	       '("marmalade" . "http://marmalade-repo.org/packages/"))
-  (add-to-list 'package-archives
-	       '("melpa" . "http://melpa.milkbox.net/packages/")
-	       'APPEND))
-
-;; auto-complete
-(require 'auto-complete-config)
-;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict/")
-(ac-config-default)
-(setq ac-auto-show-menu 0.5)
-(define-key ac-completing-map "\M-/" 'ac-stop)
-
-;; Icicles
-;; (add-to-list 'load-path "~/.emacs.d/icicles")
-(require 'icicles)
-(icy-mode t)
-
-;; autopair
-(require 'autopair)
-(autopair-global-mode)
-
-;; pymacs
-(autoload 'pymacs-apply "pymacs")
-(autoload 'pymacs-call "pymacs")
-(autoload 'pymacs-eval "pymacs" nil t)
-(autoload 'pymacs-exec "pymacs" nil t)
-(autoload 'pymacs-load "pymacs" nil t)
-(autoload 'pymacs-autoload "pymacs")
-;;(eval-after-load "pymacs"
-;;  '(add-to-list 'pymacs-load-path YOUR-PYMACS-DIRECTORY"))
-
-;; ropemacs
-(require 'pymacs)
-(pymacs-load "ropemacs" "rope-")
-(setq ropemacs-enable-autoimport t)
-(setq ropemacs-autoimport-modules t)
-(setq ropemacs-use-pop-to-buffer t)
-;;(setq ropemacs-enable-shortcuts nil)
-;;(setq ropemacs-local-prefix "C-c C-p")
-
-;; python-mode
-;; (add-to-list 'load-path "~/.emacs.d/python-mode/")
-(setq py-install-directory "~/.emacs.d/python-mode/")
-(setq py-load-pymacs-p t)
-(setq py-smart-operator-mode-p nil)
-(setq py-prepare-autopair-mode-p t)
-(setq py-set-complete-keymap-p t)
-(autoload 'python-mode "python-mode" "Python Mode." t)
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-(add-to-list 'interpreter-mode-alist '("python" . python-mode))
-(require 'python-mode)
-
-(add-to-list 'load-path "~/.emacs.d/python-mode/completion/")
-;; (setq ac-sources '(ac-source-pycomplete))
-;; or before the other sources using
-(require 'auto-complete-pycomplete)
-;; (add-to-list 'ac-sources 'ac-source-pycomplete)
-(defun py-load-pycomplete ()
-  "Load Pymacs based pycomplete."
-  (interactive)
-  (let* ((path (getenv "PYTHONPATH"))
-         (py-install-directory (cond ((string= "" py-install-directory)
-                                      (py-guess-py-install-directory))
-                                     (t (py-normalize-directory py-install-directory))))
-         (pycomplete-directory (concat (expand-file-name py-install-directory) "completion")))
-    (if (py-install-directory-check)
-        (progn
-          ;; If the Pymacs process is already running, augment its path.
-          (when (and (get-process "pymacs") (fboundp 'pymacs-exec))
-            (pymacs-exec (concat "sys.path.insert(0, '" pycomplete-directory "')")))
-          (require 'pymacs)
-          (setenv "PYTHONPATH" (concat
-                                pycomplete-directory
-                                (if path (concat path-separator path))))
-          (add-to-list 'load-path pycomplete-directory)
-          (require 'pycomplete)
-          (add-hook 'python-mode-hook 'py-complete-initialize))
-      (error "`py-install-directory' not set, see INSTALL"))))
-
-(py-load-pycomplete)
-
 ;; C++ and C mode...
 (add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
 
@@ -378,11 +291,6 @@
 ;; Add all of the hooks...
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'my-c-mode-hook)
-
-;;;; ECB
-(require 'ecb-autoloads)
-(require 'ecb)
-(setq stack-trace-on-error t)
 
 ;;;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -433,7 +341,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
     ;; Set Chinese font
     ;; Do not use 'unicode charset, it will cause the english font setting invalid
-    (message "Set Chinese Font to %s" zh-font)
+    (message "Set Chinese Font to %S" zh-font)
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font (frame-parameter nil 'font)
                         charset
@@ -441,8 +349,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (if (not (eq system-type 'cygwin))
     (qiang-set-font
-     '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=14"
-     '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体")))
+     '("YaHei Mono" "Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=15"
+     '("YaHei Mono" "MicroSoft YaHei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体")))
 
 ;;;; 启动时自动最大化
 (defun w32-restore-frame ()
@@ -564,15 +472,131 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
              (indent-region (region-beginning) (region-end) nil))))))
 ;;;;
 
-;;;; highlight-symbol
+;;;; transparent, set alpha
+(set-frame-parameter (selected-frame) 'alpha '(100 100))
+;; you can define your alpha-list to set the transform
+(setq alpha-list '((75 65) (100 100)))
+
+(defun loop-alpha ()
+  (interactive)
+  (let ((h (car alpha-list)))                ;; head value will set to
+    ((lambda (a ab)
+       (set-frame-parameter (selected-frame) 'alpha (list a ab))
+       (add-to-list 'default-frame-alist (cons 'alpha (list a ab)))
+       ) (car h) (car (cdr h)))
+    (setq alpha-list (cdr (append alpha-list (list h))))
+    )
+  )
+
+;;;; abbrev-mode
+(setq save-abbrevs t)
+(setq abbrev-file-name "~/.emacs.d/abbrev_defs")
+(if (file-exists-p abbrev-file-name)
+    (quietly-read-abbrev-file))
+(setq save-abbrevs t)
+(setq default-abbrev-mode t)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;;;; nasl-mode
+(require 'nasl-mode)
+
+;;;; package management
+(when (> emacs-major-version 23)
+  (require 'package)
+  (package-initialize)
+  ;; add the user-contributed repository
+  (add-to-list 'package-archives
+	       '("elpa" . "http://tromey.com/elpa/"))
+  (add-to-list 'package-archives
+	       '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives
+	       '("melpa" . "http://melpa.milkbox.net/packages/")
+	       'APPEND))
+
+;; highlight-symbol
 (require 'highlight-symbol)
 (global-set-key [(control f3)] 'highlight-symbol-at-point)
 (global-set-key [(shift f3)] 'highlight-symbol-prev)
 (global-set-key [(meta f3)] 'highlight-symbol-remove-all)
 (global-set-key [(control meta f3)] 'highlight-symbol-query-replace)
 
-;;;; nasl-mode
-(require 'nasl-mode)
+;; smart-tab
+(require 'smart-tab)
+(global-smart-tab-mode nil)
+
+;; auto-complete
+(require 'auto-complete-config)
+(ac-config-default)
+(setq ac-auto-show-menu 0.5)
+(define-key ac-completing-map "\M-/" 'ac-stop)
+
+;; Icicles
+(require 'icicles)
+(icy-mode t)
+
+;; autopair
+(require 'autopair)
+(autopair-global-mode)
+
+;; pymacs
+(autoload 'pymacs-apply "pymacs")
+(autoload 'pymacs-call "pymacs")
+(autoload 'pymacs-eval "pymacs" nil t)
+(autoload 'pymacs-exec "pymacs" nil t)
+(autoload 'pymacs-load "pymacs" nil t)
+(autoload 'pymacs-autoload "pymacs")
+;;(eval-after-load "pymacs"
+;;  '(add-to-list 'pymacs-load-path YOUR-PYMACS-DIRECTORY"))
+
+;; ropemacs
+(require 'pymacs)
+(pymacs-load "ropemacs" "rope-")
+(setq ropemacs-enable-autoimport t)
+(setq ropemacs-autoimport-modules t)
+(setq ropemacs-use-pop-to-buffer t)
+;;(setq ropemacs-enable-shortcuts nil)
+;;(setq ropemacs-local-prefix "C-c C-p")
+
+;; python-mode
+(setq py-install-directory "~/.emacs.d/python-mode/")
+(setq py-load-pymacs-p t)
+(setq py-smart-operator-mode-p nil)
+(setq py-prepare-autopair-mode-p t)
+(setq py-set-complete-keymap-p t)
+(autoload 'python-mode "python-mode" "Python Mode." t)
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+(require 'python-mode)
+
+(add-to-list 'load-path "~/.emacs.d/python-mode/completion/")
+;; (setq ac-sources '(ac-source-pycomplete))
+;; or before the other sources using
+(require 'auto-complete-pycomplete)
+;; (add-to-list 'ac-sources 'ac-source-pycomplete)
+(defun py-load-pycomplete ()
+  "Load Pymacs based pycomplete."
+  (interactive)
+  (let* ((path (getenv "PYTHONPATH"))
+         (py-install-directory (cond ((string= "" py-install-directory)
+                                      (py-guess-py-install-directory))
+                                     (t (py-normalize-directory py-install-directory))))
+         (pycomplete-directory (concat (expand-file-name py-install-directory) "completion")))
+    (if (py-install-directory-check)
+        (progn
+          ;; If the Pymacs process is already running, augment its path.
+          (when (and (get-process "pymacs") (fboundp 'pymacs-exec))
+            (pymacs-exec (concat "sys.path.insert(0, '" pycomplete-directory "')")))
+          (require 'pymacs)
+          (setenv "PYTHONPATH" (concat
+                                pycomplete-directory
+                                (if path (concat path-separator path))))
+          (add-to-list 'load-path pycomplete-directory)
+          (require 'pycomplete)
+          (add-hook 'python-mode-hook 'py-complete-initialize))
+      (error "`py-install-directory' not set, see INSTALL"))))
+
+(py-load-pycomplete)
 
 ;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -630,7 +654,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
 
 ;;;; color-theme
-;; (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
@@ -665,7 +688,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (setq color-theme-is-global nil) ; Initialization
 
 ;;;; yasnippet
-;; (add-to-list 'load-path "~/.emacs.d/yasnippet")
 (require 'yasnippet)
 ;; (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets/")
 (yas-global-mode 1)
@@ -693,24 +715,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       (put 'upcase-region 'disabled nil)
 ))
 
-;;;; transparent, set alpha
-(set-frame-parameter (selected-frame) 'alpha '(100 100))
-;; you can define your alpha-list to set the transform
-(setq alpha-list '((75 65) (100 100)))
-
-(defun loop-alpha ()
-  (interactive)
-  (let ((h (car alpha-list)))                ;; head value will set to
-    ((lambda (a ab)
-       (set-frame-parameter (selected-frame) 'alpha (list a ab))
-       (add-to-list 'default-frame-alist (cons 'alpha (list a ab)))
-       ) (car h) (car (cdr h)))
-    (setq alpha-list (cdr (append alpha-list (list h))))
-    )
-  )
-
 ;;;; evernote-mode
-;; (add-to-list 'load-path "~/.emacs.d/evernote-mode-0_41/")
 (require 'evernote-mode)
 (setq evernote-username "dsjlzh") ; optional: you can use this username as default.
 (setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
@@ -721,13 +726,3 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key "\C-cew" 'evernote-write-note)
 (global-set-key "\C-cep" 'evernote-post-region)
 (global-set-key "\C-ceb" 'evernote-browser)
-
-;;;; abbrev-mode
-(setq save-abbrevs t)
-(setq abbrev-file-name "~/.emacs.d/abbrev_defs")
-(if (file-exists-p abbrev-file-name)
-    (quietly-read-abbrev-file))
-(setq save-abbrevs t)
-(setq default-abbrev-mode t)
-
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
