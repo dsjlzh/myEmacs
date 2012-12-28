@@ -4,6 +4,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(column-number-mode t)
  '(display-time-mode nil)
  '(ecb-layout-window-sizes nil)
  '(ecb-options-version "2.40")
@@ -12,6 +13,7 @@
  '(py-shell-name "python")
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
+ '(server-mode t)
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80)))
@@ -21,17 +23,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(hl-line ((t (:background "SystemHotTrackingColor"))))
  '(py-number-face ((t (:inherit font-lock-constant-face))))
  '(py-variable-name-face ((t (:inherit font-lock-variable-name-face))))
  '(semantic-unmatched-syntax-face ((t nil))))
-
-(if (eq system-type 'windows-nt)
-    (menu-bar-mode t))
-
-(column-number-mode t)
-
-;;;; server mode
-(server-mode t)
 
 ;;;; cedet
 ;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
@@ -171,7 +166,7 @@
 (global-set-key [f4] 'ecb-toggle-ecb-windows)
 (global-set-key [f5] 'compile)
 (global-set-key [f6] 'loop-alpha)
-(global-set-key [f7] `fill-region)
+(global-set-key [f7] 'fill-region)
 (global-set-key [f8] 'auto-fill-mode)
 (global-set-key [f9] 'semantic-ia-fast-jump)
 (global-set-key [f10] 'toggle-menu-bar-mode-from-frame)
@@ -203,37 +198,41 @@
    \(fn &optional arg)"
   'interactive)
 
-(global-set-key (kbd "C-M-<up>") 'copy-from-above-command)
-(global-set-key (kbd "C-M-<down>") (lambda ()
-				     (interactive)
-				     (forward-line 1)
-				     (open-line 1)
-				     (copy-from-above-command)))
+(defun copy-line-up()
+  (interactive)
+  (scroll-up 1)
+  (copy-line-down)
+  (forward-line -1))
+
+(defun copy-line-down()
+  (interactive)
+  (forward-line 1)
+  (open-line 1)
+  (copy-from-above-command))
+
+(global-set-key (kbd "C-M-<up>") 'copy-line-up)
+(global-set-key (kbd "C-M-<down>") 'copy-line-down)
 
 ;; pan movement
-(global-set-key '[S-up]     'my-pan-down-1)
-(global-set-key '[S-down]   'my-pan-up-1)
-(global-set-key '[S-left]   'my-pan-right-2)
-(global-set-key '[S-right]  'my-pan-left-2)
+(global-set-key '[S-up]     'my-pan-up)
+(global-set-key '[S-down]   'my-pan-down)
+(global-set-key '[S-left]   'my-pan-left)
+(global-set-key '[S-right]  'my-pan-right)
 
-(defun my-pan-up-1 ()
+(defun my-pan-up ()
   (interactive)
-  ;; (next-line 1)
   (scroll-up 1))
 
-(defun my-pan-down-1 ()
+(defun my-pan-down ()
   (interactive)
-  ;; (previous-line 1)
   (scroll-down 1))
 
-(defun my-pan-left-2 ()
+(defun my-pan-left ()
   (interactive)
-  (forward-char 2)
   (scroll-left 2))
 
-(defun my-pan-right-2 ()
+(defun my-pan-right ()
   (interactive)
-  (backward-char 2)
   (scroll-right 2))
 
 ;; swap-buffer
@@ -241,6 +240,22 @@
 (defun my-swap-buffer ()
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 'VISIBLE-OK)))
+
+;; swap-window
+(global-set-key "\C-t" 'my-swap-window)
+(setq swap-windows-p t)
+(defun my-swap-window ()
+  "Switch to the previous window"
+  (interactive)
+  (if swap-windows-p
+      (progn
+	(message "previous window")
+	(setq swap-windows-p nil)
+	(select-window (previous-window)))
+    (progn
+      (message "next windows")
+      (setq swap-windows-p t)
+      (select-window (next-window)))))
 
 ;; Calendar
 (require 'calendar)
@@ -281,7 +296,7 @@
   (setq c-delete-function 'backward-delete-char)
   (setq c-tab-always-indent t)
   ;; BSD-ish indentation style
-					;  (setq c-indent-level 4)
+  ;; (setq c-indent-level 4)
   (setq c-basic-offset 4)
   (setq c-continued-statement-offset 4)
   (setq c-brace-offset -4)
@@ -514,6 +529,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 	       '("melpa" . "http://melpa.milkbox.net/packages/")
 	       'APPEND))
 
+;; info+
+(eval-after-load "info" '(require 'info+))
+
 ;; highlight-symbol
 (require 'highlight-symbol)
 (global-set-key [(control f3)] 'highlight-symbol-at-point)
@@ -521,9 +539,18 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key [(meta f3)] 'highlight-symbol-remove-all)
 (global-set-key [(control meta f3)] 'highlight-symbol-query-replace)
 
-;; smart-tab
-(require 'smart-tab)
-(global-smart-tab-mode nil)
+;; buffer move
+(require 'buffer-move)
+(global-set-key (kbd "<C-S-up>")     'buf-move-up)
+(global-set-key (kbd "<C-S-down>")   'buf-move-down)
+(global-set-key (kbd "<C-S-left>")   'buf-move-left)
+(global-set-key (kbd "<C-S-right>")  'buf-move-right)
+
+;; Windows move
+(global-set-key (kbd "<M-S-up>")     'windmove-up)
+(global-set-key (kbd "<M-S-down>")   'windmove-down)
+(global-set-key (kbd "<M-S-left>")   'windmove-left)
+(global-set-key (kbd "<M-S-right>")  'windmove-right)
 
 ;; auto-complete
 (require 'auto-complete-config)
@@ -537,7 +564,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 ;; autopair
 (require 'autopair)
-(autopair-global-mode)
+(autopair-global-mode t)
 
 ;; pymacs
 (autoload 'pymacs-apply "pymacs")
