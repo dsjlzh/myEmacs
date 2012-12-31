@@ -1,4 +1,4 @@
-;; (setq debug-on-error t)
+(setq debug-on-error t)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -142,6 +142,7 @@
 
 ;; add .emacs.d to load-path
 (add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/icicles-ext")
 
 ;;使用y or n提问
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -513,7 +514,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;;;; nasl-mode
+;; nasl-mode
 (require 'nasl-mode)
 
 ;;;; package management
@@ -528,6 +529,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (add-to-list 'package-archives
 	       '("melpa" . "http://melpa.milkbox.net/packages/")
 	       'APPEND))
+
+;; Crosshair
+(global-hl-line-mode t)
 
 ;; info+
 (eval-after-load "info" '(require 'info+))
@@ -565,6 +569,11 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; autopair
 (require 'autopair)
 (autopair-global-mode t)
+
+;; graphviz-dot-mode
+(add-hook 'graphviz-dot-mode-hook
+	  #'(lambda () (setq autopair-dont-activate t)))
+(setq graphviz-dot-auto-indent-on-semi nil)
 
 ;; pymacs
 (autoload 'pymacs-apply "pymacs")
