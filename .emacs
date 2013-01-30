@@ -1,14 +1,21 @@
 (setq debug-on-error t)
+;;;; cedet 1.1
+(load-file "~/.emacs.d/cedet/common/cedet.el")
+
+;; customize
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(bmkp-last-as-first-bookmark-file "/home/gerald/.emacs.d/emacs.bmk")
+ '(bookmark-default-file "~/.emacs.d/emacs.bmk")
  '(column-number-mode t)
  '(display-time-mode nil)
  '(ecb-layout-window-sizes nil)
  '(ecb-options-version "2.40")
  '(fill-column 80)
+ '(linum-format " %d ")
  '(menu-bar-mode nil)
  '(py-shell-name "python")
  '(save-place t nil (saveplace))
@@ -27,115 +34,6 @@
  '(py-number-face ((t (:inherit font-lock-constant-face))))
  '(py-variable-name-face ((t (:inherit font-lock-variable-name-face))))
  '(semantic-unmatched-syntax-face ((t nil))))
-
-;;;; cedet
-;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
-(load-file "~/.emacs.d/cedet/common/cedet.elc")
-(load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
-(global-ede-mode t)
-;; Activate semantic
-(semantic-load-enable-minimum-features)
-(semantic-load-enable-code-helpers)
-;; (semantic-load-enable-guady-code-helpers)
-;; (semantic-load-enable-excessive-code-helpers)
-(semantic-load-enable-semantic-debugging-helpers)
-
-(setq semanticdb-project-roots (list (expand-file-name "/")))
-(defconst cedet-user-include-dirs
-  (list ".." "../include" "../inc" "../common" "../public"
-        "../.." "../../include" "../../inc" "../../common" "../../public"))
-
-(if (eq system-type 'windows-nt)
-    (defconst cedet-win32-include-dirs
-      (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
-	    "C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
-	    "C:/Program Files/Microsoft SDKs/Windows/v7.0/Include")))
-
-;; (require 'semantic-c nil 'noerror)
-(let ((include-dirs cedet-user-include-dirs))
-  (when (eq system-type 'windows-nt)
-    (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
-  (mapc (lambda (dir)
-          (semantic-add-system-include dir 'c++-mode)
-          (semantic-add-system-include dir 'c-mode))
-        include-dirs))
-
-;; if you want to enable support for gnu global
-(when (cedet-gnu-global-version-check t)
-  (require 'semanticdb-global)
-  (semanticdb-enable-gnu-global-databases 'c-mode)
-  (semanticdb-enable-gnu-global-databases 'c++-mode))
-
-;; enable ctags for some languages:
-;; Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
-(if (eq system-type 'windows-nt)
-    (setq semantic-ectag-program "C:/cygwin/usr/local/bin/ctags.exe"))
-(when (cedet-ectag-version-check)
-  (semantic-load-enable-primary-exuberent-ctags-support))
-
-(setq eassist-header-switches
-      '(("h" . ("cpp" "cxx" "c++" "CC" "cc" "C" "c" "mm" "m"))
-        ("hh" . ("cc" "CC" "cpp" "cxx" "c++" "C"))
-        ("hpp" . ("cpp" "cxx" "c++" "cc" "CC" "C"))
-        ("hxx" . ("cxx" "cpp" "c++" "cc" "CC" "C"))
-        ("h++" . ("c++" "cpp" "cxx" "cc" "CC" "C"))
-        ("H" . ("C" "CC" "cc" "cpp" "cxx" "c++" "mm" "m"))
-        ("HH" . ("CC" "cc" "C" "cpp" "cxx" "c++"))
-        ("cpp" . ("hpp" "hxx" "h++" "HH" "hh" "H" "h"))
-        ("cxx" . ("hxx" "hpp" "h++" "HH" "hh" "H" "h"))
-        ("c++" . ("h++" "hpp" "hxx" "HH" "hh" "H" "h"))
-        ("CC" . ("HH" "hh" "hpp" "hxx" "h++" "H" "h"))
-        ("cc" . ("hh" "HH" "hpp" "hxx" "h++" "H" "h"))
-        ("C" . ("hpp" "hxx" "h++" "HH" "hh" "H" "h"))
-        ("c" . ("h"))
-        ("m" . ("h"))
-        ("mm" . ("h"))))
-
-(setq tags-table-list
-      '("~/.emacs.d" "~/tmp" ))
-
-;; (setq libutil-project
-;;       (ede-cpp-root-project "libutil"
-;;                             :file "~/projects/libutil/configure.in"
-;;                             :system-include-path '("/home/meteor1113/projects/include"
-;;                                                    "/home/meteor1113/projects/common"
-;;                                                    "/home/meteor1113/projects/libutil/pub")))
-
-(defun semantic-ia-fast-jump-back ()
-  (interactive)
-  (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
-      (error "Semantic Bookmark ring is currently empty"))
-  (let* ((ring (oref semantic-mru-bookmark-ring ring))
-         (alist (semantic-mrub-ring-to-assoc-list ring))
-         (first (cdr (car alist))))
-    (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
-        (setq first (cdr (car (cdr alist)))))
-    (semantic-mrub-switch-tags first)))
-
-(defun my-cedet-hook ()
-  (local-set-key [(control return)] 'semantic-ia-complete-symbol)
-  (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
-  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-  (local-set-key [S-F9] 'semantic-ia-fast-jump-back)
-  (local-set-key [M-F12] 'eassist-switch-h-cpp)
-  (local-set-key [M-S-F9] 'semantic-analyze-proto-impl-toggle)
-  (local-set-key (kbd "M-n") 'semantic-ia-complete-symbol-menu)
-  (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
-  (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
-  (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
-  (local-set-key (kbd "C-c , +") 'semantic-tag-folding-show-all)
-  )
-
-(add-hook 'c-mode-common-hook 'my-cedet-hook)
-(add-hook 'c++-mode-common-hook 'my-cedet-hook)
-
-(defun my-c-mode-cedet-hook ()
-  (if (not (eq system-type 'cygwin))
-      (progn (local-set-key "." 'semantic-complete-self-insert)
-	     (local-set-key ">" 'semantic-complete-self-insert))))
-
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;; change dir to home
 (cd "~/")
@@ -159,17 +57,21 @@
 (require 'cursor-change)
 (cursor-change-mode 1)
 
+;; set margins
+;; (add-hook 'window-configuration-change-hook
+;;           (lambda ()
+;;             (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 2 2)))
+
 ;; Function keys
-; ÕÛµþ´úÂë¿ì½Ý¼ü
 (global-set-key [f1] 'hs-toggle-hiding)
 (global-set-key [f2] 'info)
 (global-set-key [f3] 'highlight-symbol-next)
-(global-set-key [f4] 'ecb-toggle-ecb-windows)
+(global-set-key [f4] 'semantic-ia-fast-jump)
 (global-set-key [f5] 'compile)
 (global-set-key [f6] 'loop-alpha)
-(global-set-key [f7] 'fill-region)
+;; (global-set-key [f7] 'fill-region)
 (global-set-key [f8] 'auto-fill-mode)
-(global-set-key [f9] 'semantic-ia-fast-jump)
+(global-set-key [f9] 'ecb-toggle-ecb-windows)
 (global-set-key [f10] 'toggle-menu-bar-mode-from-frame)
 (global-set-key [f11] 'toggle-full-screen)
 (global-set-key [f12] 'my-theme-cycle)
@@ -257,68 +159,6 @@
       (message "next windows")
       (setq swap-windows-p t)
       (select-window (next-window)))))
-
-;; Calendar
-(require 'calendar)
-(defun insdate-insert-current-date (&optional omit-day-of-week-p)
-  "Insert today's date using the current locale.
-  With a prefix argument, the date is inserted without the day of
-  the week."
-  (interactive "P*")
-  (insert (calendar-date-string (calendar-current-date) nil
-				omit-day-of-week-p)))
-
-(global-set-key "\C-x\M-d" `insdate-insert-current-date)
-
-;; auto fill mode
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-(add-hook 'org-mode-hook 'turn-on-auto-fill)
-
-;; C++ and C mode...
-(add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
-
-(defun my-c++-mode-hook ()
-  (setq tab-width 4)
-  (define-key c++-mode-map "\C-m" 'reindent-then-newline-and-indent)
-  (define-key c++-mode-map "\C-ce" 'c-comment-edit)
-  (setq c++-auto-hungry-initial-state 'none)
-  (setq c++-delete-function 'backward-delete-char)
-  (setq c++-tab-always-indent t)
-					;  (setq c-indent-level 4)
-  (setq c-basic-offset 4)
-  (setq c-continued-statement-offset 4)
-  (setq c++-empty-arglist-indent 4))
-
-(defun my-c-mode-hook ()
-  (setq tab-width 4)
-  (define-key c-mode-map "\C-m" 'reindent-then-newline-and-indent)
-  (define-key c-mode-map "\C-ce" 'c-comment-edit)
-  (setq c-auto-hungry-initial-state 'none)
-  (setq c-delete-function 'backward-delete-char)
-  (setq c-tab-always-indent t)
-  ;; BSD-ish indentation style
-  ;; (setq c-indent-level 4)
-  (setq c-basic-offset 4)
-  (setq c-continued-statement-offset 4)
-  (setq c-brace-offset -4)
-  (setq c-argdecl-indent 0)
-  (setq c-label-offset -4))
-
-;; Add all of the hooks...
-(add-hook 'c++-mode-hook 'my-c++-mode-hook)
-(add-hook 'c-mode-hook 'my-c-mode-hook)
-
-;;;; lua-mode
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-
-;;;; ´úÂëÕÛµþ
-(dolist (hook '(c-mode-hook
-		c++-mode-hook
-		lua-mode-hook
-		python-mode-hook))
-  (add-hook hook (lambda () (hs-minor-mode t))))
 
 ;;;; from http://emacser.com/torture-emacs.htm by qiang
 ;; set font
@@ -489,9 +329,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;;;
 
 ;;;; transparent, set alpha
-(set-frame-parameter (selected-frame) 'alpha '(100 100))
+(set-frame-parameter (selected-frame) 'alpha '(75 65))
 ;; you can define your alpha-list to set the transform
-(setq alpha-list '((75 65) (100 100)))
+(setq alpha-list '((100 100) (75 65)))
 
 (defun loop-alpha ()
   (interactive)
@@ -503,6 +343,187 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     (setq alpha-list (cdr (append alpha-list (list h))))
     )
   )
+;; Calendar
+(require 'calendar)
+(defun insdate-insert-current-date (&optional omit-day-of-week-p)
+  "Insert today's date using the current locale.
+  With a prefix argument, the date is inserted without the day of
+  the week."
+  (interactive "P*")
+  (insert (calendar-date-string (calendar-current-date) nil
+				omit-day-of-week-p)))
+
+(global-set-key "\C-x\M-d" `insdate-insert-current-date)
+
+;; code folding
+(dolist (hook '(c-mode-hook
+		c++-mode-hook
+		lua-mode-hook
+		python-mode-hook))
+  (add-hook hook (lambda () (hs-minor-mode t))))
+
+;; auto-fill mode
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(global-set-key "\C-c\C-f" `fill-region)
+
+;; C++ and C mode...
+(add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
+
+(defun my-c++-mode-hook ()
+  (setq tab-width 4)
+  (define-key c++-mode-map "\C-m" 'reindent-then-newline-and-indent)
+  (define-key c++-mode-map "\C-ce" 'c-comment-edit)
+  (setq c++-auto-hungry-initial-state 'none)
+  (setq c++-delete-function 'backward-delete-char)
+  (setq c++-tab-always-indent t)
+					;  (setq c-indent-level 4)
+  (setq c-basic-offset 4)
+  (setq c-continued-statement-offset 4)
+  (setq c++-empty-arglist-indent 4))
+
+(defun my-c-mode-hook ()
+  (setq tab-width 4)
+  (define-key c-mode-map "\C-m" 'reindent-then-newline-and-indent)
+  (define-key c-mode-map "\C-ce" 'c-comment-edit)
+  (setq c-auto-hungry-initial-state 'none)
+  (setq c-delete-function 'backward-delete-char)
+  (setq c-tab-always-indent t)
+  ;; BSD-ish indentation style
+  ;; (setq c-indent-level 4)
+  (setq c-basic-offset 4)
+  (setq c-continued-statement-offset 4)
+  (setq c-brace-offset -4)
+  (setq c-argdecl-indent 0)
+  (setq c-label-offset -4))
+
+;; Add all of the hooks...
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+
+;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
+(load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
+(global-ede-mode t)
+;; Activate semantic
+(semantic-load-enable-minimum-features)
+(semantic-load-enable-code-helpers)
+;; (semantic-load-enable-guady-code-helpers)
+;; (semantic-load-enable-excessive-code-helpers)
+(semantic-load-enable-semantic-debugging-helpers)
+
+;; * This enables the use of Exuberant ctags if you have it installed.
+;;   If you use C++ templates or boost, you should NOT enable it.
+;; (semantic-load-enable-all-exuberent-ctags-support)
+;;   Or, use one of these two types of support.
+;;   Add support for new languages only via ctags.
+;; (semantic-load-enable-primary-exuberent-ctags-support)
+;;   Add support for using ctags as a backup parser.
+;; (semantic-load-enable-secondary-exuberent-ctags-support)
+
+;; Enable SRecode (Template management) minor-mode.
+;; (global-srecode-minor-mode 1)
+
+(setq semanticdb-project-roots (list (expand-file-name "/")))
+(defconst cedet-user-include-dirs
+  (list ".." "../include" "../inc" "../common" "../public"
+        "../.." "../../include" "../../inc" "../../common" "../../public"))
+
+(if (eq system-type 'windows-nt)
+    (defconst cedet-win32-include-dirs
+      (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
+	    "C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
+	    "C:/Program Files/Microsoft SDKs/Windows/v7.0/Include")))
+
+;; (require 'semantic-c nil 'noerror)
+(let ((include-dirs cedet-user-include-dirs))
+  (when (eq system-type 'windows-nt)
+    (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
+  (mapc (lambda (dir)
+          (semantic-add-system-include dir 'c++-mode)
+          (semantic-add-system-include dir 'c-mode))
+        include-dirs))
+
+;; if you want to enable support for gnu global
+(when (cedet-gnu-global-version-check t)
+  (require 'semanticdb-global)
+  (semanticdb-enable-gnu-global-databases 'c-mode)
+  (semanticdb-enable-gnu-global-databases 'c++-mode))
+
+;; enable ctags for some languages:
+;; Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
+;; (if (eq system-type 'windows-nt)
+;;     (setq semantic-ectag-program "C:/cygwin/usr/local/bin/ctags.exe"))
+(when (cedet-ectag-version-check)
+  (semantic-load-enable-primary-exuberent-ctags-support))
+
+(setq eassist-header-switches
+      '(("h" . ("cpp" "cxx" "c++" "CC" "cc" "C" "c" "mm" "m"))
+        ("hh" . ("cc" "CC" "cpp" "cxx" "c++" "C"))
+        ("hpp" . ("cpp" "cxx" "c++" "cc" "CC" "C"))
+        ("hxx" . ("cxx" "cpp" "c++" "cc" "CC" "C"))
+        ("h++" . ("c++" "cpp" "cxx" "cc" "CC" "C"))
+        ("H" . ("C" "CC" "cc" "cpp" "cxx" "c++" "mm" "m"))
+        ("HH" . ("CC" "cc" "C" "cpp" "cxx" "c++"))
+        ("cpp" . ("hpp" "hxx" "h++" "HH" "hh" "H" "h"))
+        ("cxx" . ("hxx" "hpp" "h++" "HH" "hh" "H" "h"))
+        ("c++" . ("h++" "hpp" "hxx" "HH" "hh" "H" "h"))
+        ("CC" . ("HH" "hh" "hpp" "hxx" "h++" "H" "h"))
+        ("cc" . ("hh" "HH" "hpp" "hxx" "h++" "H" "h"))
+        ("C" . ("hpp" "hxx" "h++" "HH" "hh" "H" "h"))
+        ("c" . ("h"))
+        ("m" . ("h"))
+        ("mm" . ("h"))))
+
+(setq tags-table-list
+      '("~/.emacs.d" "~/tmp"))
+
+;; (setq libutil-project
+;;       (ede-cpp-root-project "libutil"
+;;                             :file "~/projects/libutil/configure.in"
+;;                             :system-include-path '("/home/meteor1113/projects/include"
+;;                                                    "/home/meteor1113/projects/common"
+;;                                                    "/home/meteor1113/projects/libutil/pub")))
+
+(defun semantic-ia-fast-jump-back ()
+  (interactive)
+  (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
+      (error "Semantic Bookmark ring is currently empty"))
+  (let* ((ring (oref semantic-mru-bookmark-ring ring))
+         (alist (semantic-mrub-ring-to-assoc-list ring))
+         (first (cdr (car alist))))
+    (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
+        (setq first (cdr (car (cdr alist)))))
+    (semantic-mrub-switch-tags first)))
+
+(defun my-cedet-hook ()
+  (local-set-key [(control return)] 'semantic-ia-complete-symbol)
+  (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
+  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
+  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
+  (local-set-key [M-F4] 'semantic-ia-fast-jump-back)
+  (local-set-key [M-F12] 'eassist-switch-h-cpp)
+  (local-set-key [M-F9] 'semantic-analyze-proto-impl-toggle)
+  (local-set-key (kbd "M-n") 'semantic-ia-complete-symbol-menu)
+  (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
+  (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
+  (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
+  (local-set-key (kbd "C-c , +") 'semantic-tag-folding-show-all)
+  )
+
+(add-hook 'c-mode-common-hook 'my-cedet-hook)
+(add-hook 'c++-mode-common-hook 'my-cedet-hook)
+
+(defun my-c-mode-cedet-hook ()
+  (if (not (eq system-type 'cygwin))
+      (progn (local-set-key "." 'semantic-complete-self-insert)
+	     (local-set-key ">" 'semantic-complete-self-insert))))
+
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+
+;;;; lua-mode
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
 ;;;; abbrev-mode
 (setq save-abbrevs t)
@@ -516,6 +537,23 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 ;; nasl-mode
 (require 'nasl-mode)
+
+;; bat-mode
+(setq auto-mode-alist
+      (append
+       (list (cons "\\.[bB][aA][tT]$" 'bat-mode))
+       ;; For DOS init files
+       (list (cons "CONFIG\\."   'bat-mode))
+       (list (cons "AUTOEXEC\\." 'bat-mode))
+       auto-mode-alist))
+
+(autoload 'bat-mode "bat-mode"
+  "DOS and WIndows BAT files" t)
+
+;; jdee
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee-2.4.0.1/lisp"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/elib-1.0"))
+(require 'jde)
 
 ;;;; package management
 (when (> emacs-major-version 23)
@@ -731,11 +769,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;;; cygwin-mount
 (if (eq system-type 'windows-nt)
     (progn
-      ;; (setq py-shell-name "ipython")
-      ;; exec-path
-      (if (file-directory-p "c:/cygwin/bin")
-      	  (add-to-list 'exec-path "c:/cygwin/bin"))
-      (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
+;;       ;; exec-path
+;;       (if (file-directory-p "c:/cygwin/bin")
+;;       	  (add-to-list 'exec-path "c:/cygwin/bin"))
+;;       (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
 
       (require 'cygwin-mount)
       (cygwin-mount-activate)
@@ -744,12 +781,15 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       		'Shell-strip-ctrl-m nil t)
       (add-hook 'comint-output-filter-functions
       		'comint-watch-for-password-prompt nil t)
-      (setq explicit-shell-file-name "bash.exe")
-      ;; For subprocesses invoked via the shell
-      ;; (e.g., "shell -c command")
-      (setq shell-file-name explicit-shell-file-name)
+;;       (setq explicit-shell-file-name "bash.exe")
+;;       ;; For subprocesses invoked via the shell
+;;       ;; (e.g., "shell -c command")
+;;       (setq shell-file-name explicit-shell-file-name)
       (put 'upcase-region 'disabled nil)
 ))
+
+;; doc-mode
+;; (add-hook 'c-mode-common-hook 'doc-mode)
 
 ;;;; evernote-mode
 (require 'evernote-mode)
