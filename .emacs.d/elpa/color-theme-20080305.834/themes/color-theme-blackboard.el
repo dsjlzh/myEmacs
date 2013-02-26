@@ -9,7 +9,7 @@
 ;;
 ;; And then (color-theme-blackboard) to activate it.
 ;;
-;; MIT License Copyright (c) 2008 JD Huntington 
+;; MIT License Copyright (c) 2008 JD Huntington
 ;; Credits due to the excellent TextMate Blackboard theme
 ;;
 ;; All patches welcome
@@ -42,10 +42,10 @@
      (font-lock-keyword-face ((t (:foreground "#FBDE2D"))))
      (font-lock-preprocessor-face ((t (:foreground "Aquamarine"))))
      (font-lock-reference-face ((t (:foreground "SlateBlue"))))
-     
+
      (font-lock-regexp-grouping-backslash ((t (:foreground "#E9C062"))))
      (font-lock-regexp-grouping-construct ((t (:foreground "red"))))
-     
+
      (font-lock-string-face ((t (:foreground "#61CE3C"))))
      (font-lock-type-face ((t (:foreground "#8DA6CE"))))
      ;; (font-lock-variable-name-face ((t (:foreground "#FF6400"))))
@@ -54,10 +54,11 @@
      (gui-element ((t (:background "#D4D0C8" :foreground "black"))))
      (region ((t (:background "#253B76"))))
      (mode-line ((t (:background "grey75" :foreground "black"))))
-					;(highlight ((t (:background "#222222"))))
+     ;; (highlight ((t (:background "#222222"))))
      (highlight ((t (:background "#001"))))
      (highline-face ((t (:background "SeaGreen"))))
-     (italic ((t (nil))))
+     (italic ((t (:slant italic))))
+     (bold-italic ((t (:slant italic :weight bold))))
      (left-margin ((t (nil))))
      (text-cursor ((t (:background "yellow" :foreground "black"))))
      (toolbar ((t (nil))))
@@ -82,5 +83,5 @@
      (org-agenda-structure ((t (:weight bold :foreground "tomato"))))
      (org-agenda-date ((t (:foreground "#6ac214"))))
      (org-agenda-date-weekend ((t (:weight normal :foreground "dodger blue"))))
-     ;; (org-agenda-date-today ((t (:weight bold :foreground "#edd400"))))
+     (org-agenda-date-today ((t (:weight bold :foreground "#edd400"))))
 )))

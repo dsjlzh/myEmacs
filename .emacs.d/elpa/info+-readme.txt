@@ -14,6 +14,7 @@
 
    `Info-breadcrumbs-in-header-flag' (Emacs 23+),
    `Info-display-node-header-fn', `Info-fit-frame-flag',
+   `Info-fontify-angle-bracketed-flag',
    `Info-fontify-quotations-flag',
    `Info-fontify-reference-items-flag',
    `Info-fontify-single-quote-flag', `Info-saved-nodes',
@@ -26,7 +27,10 @@
    `Info-merge-subnodes',
    `Info-mouse-follow-nearest-node-new-window',
    `Info-save-current-node', `Info-set-breadcrumbs-depth' (Emacs
-   23+), `Info-toggle-breadcrumbs-in-header-line' (Emacs 23+),
+   23+), `Info-toggle-fontify-angle-bracketed',
+   `Info-toggle-fontify-quotations',
+   `Info-toggle-fontify-single-quote',
+   `Info-toggle-breadcrumbs-in-header-line' (Emacs 23+),
    `Info-virtual-book', `menu-bar-read-lispref',
    `menu-bar-read-lispintro',
 
@@ -40,7 +44,8 @@
  Internal variables defined here:
 
    `Info-breadcrumbs-depth-internal' (Emacs 23+),
-   `Info-merged-map', `Info-mode-syntax-table'.
+   `Info-merged-map', `Info-mode-syntax-table',
+   `info-quoted+<>-regexp'.
 
 
  ***** NOTE: The following standard faces defined in `info.el'
@@ -67,7 +72,10 @@
     6. Notes in face `info-xref'.
     7. If `Info-fontify-quotations-flag', then fontify `...' in
        face `info-quoted-name' and "..." in face `info-string'.
-    8. If `Info-fontify-single-quote-flag' and
+    8. If `Info-fontify-angle-bracketed-flag' and
+       `Info-fontify-quotations-flag' then fontify <...> in face
+       `info-quoted-name'.
+    9. If `Info-fontify-single-quote-flag' and
        `Info-fontify-quotations-flag', then fontify ' in face
        `info-single-quote'.
  `Info-goto-emacs-command-node' -

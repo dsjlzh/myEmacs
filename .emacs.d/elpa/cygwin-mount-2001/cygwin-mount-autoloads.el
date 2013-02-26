@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads nil nil ("cygwin-mount-pkg.el" "cygwin-mount.el")
-;;;;;;  (20695 52498 472000))
+;;;;;;  (20719 31126 650000))
 
 ;;;***
 
