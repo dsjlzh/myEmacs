@@ -30,7 +30,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(bold-italic ((t (:slant italic :weight bold))))
  '(hl-line ((t (:background "SystemHotTrackingColor"))))
+ '(italic ((t (:slant italic))))
  '(py-number-face ((t (:inherit font-lock-constant-face))))
  '(py-variable-name-face ((t (:inherit font-lock-variable-name-face))))
  '(semantic-unmatched-syntax-face ((t nil))))
@@ -205,8 +207,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (if (not (eq system-type 'cygwin))
     (qiang-set-font
-     '("YaHei Mono" "Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=15"
-     '("YaHei Mono" "MicroSoft YaHei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体")))
+     '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=15"
+     '("MicroSoft YaHei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体") 16))
 
 ;;;; 启动时自动最大化
 (defun w32-restore-frame ()
@@ -561,7 +563,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (package-initialize)
   ;; add the user-contributed repository
   (add-to-list 'package-archives
-	       '("elpa" . "http://tromey.com/elpa/"))
+	       '("tromey" . "http://tromey.com/elpa/"))
   (add-to-list 'package-archives
 	       '("marmalade" . "http://marmalade-repo.org/packages/"))
   (add-to-list 'package-archives
@@ -802,3 +804,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key "\C-cew" 'evernote-write-note)
 (global-set-key "\C-cep" 'evernote-post-region)
 (global-set-key "\C-ceb" 'evernote-browser)
+
+;; (require 'save-visited-files)
+(turn-on-save-visited-files-mode)
