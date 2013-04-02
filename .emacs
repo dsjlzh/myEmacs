@@ -1,6 +1,6 @@
 (setq debug-on-error t)
 ;;;; cedet 1.1
-(load-file "~/.emacs.d/cedet/common/cedet.el")
+;; (load-file "~/.emacs.d/cedet/common/cedet.el")
 
 ;; customize
 (custom-set-variables
@@ -17,13 +17,17 @@
  '(fill-column 80)
  '(linum-format " %d ")
  '(menu-bar-mode nil)
- '(py-shell-name "python")
+ '(py-indent-tabs-mode t)
+ '(py-python-command-args (quote ("D:\\\\Python27\\\\Scripts\\\\ipython-script.py")))
+ '(py-smart-indentation nil)
+ '(py-tab-indent t)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
  '(server-mode t)
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80)))
+ '(tab-width 4)
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -34,8 +38,7 @@
  '(hl-line ((t (:background "SystemHotTrackingColor"))))
  '(italic ((t (:slant italic))))
  '(py-number-face ((t (:inherit font-lock-constant-face))))
- '(py-variable-name-face ((t (:inherit font-lock-variable-name-face))))
- '(semantic-unmatched-syntax-face ((t nil))))
+ '(py-variable-name-face ((t (:inherit font-lock-variable-name-face)))))
 
 ;; change dir to home
 (cd "~/")
@@ -44,17 +47,17 @@
 (add-to-list 'load-path "~/.emacs.d/")
 (add-to-list 'load-path "~/.emacs.d/icicles-ext")
 
-;;Ê¹ÓÃy or nÌáÎÊ
+;;ä½¿ç”¨y or næé—®
 (fset 'yes-or-no-p 'y-or-n-p)
-;;¹Ø±Õ¿ªÆô»­Ãæ
+;;å…³é—­å¼€å¯ç”»é¢
 (setq inhibit-startup-message t)
-;; ×Ô¶¯µÄÔÚÎÄ¼þÄ©Ôö¼ÓÒ»ÐÂÐÐ
+;; è‡ªåŠ¨çš„åœ¨æ–‡ä»¶æœ«å¢žåŠ ä¸€æ–°è¡Œ
 (setq require-final-newline t)
-;; µ±¹â±êÔÚÐÐÎ²ÉÏÏÂÒÆ¶¯µÄÊ±ºò£¬Ê¼ÖÕ±£³ÖÔÚÐÐÎ²¡£
+;; å½“å…‰æ ‡åœ¨è¡Œå°¾ä¸Šä¸‹ç§»åŠ¨çš„æ—¶å€™ï¼Œå§‹ç»ˆä¿æŒåœ¨è¡Œå°¾ã€‚
 (setq track-eol t)
-;; ÏÔÊ¾ÐÐºÅ
+;; æ˜¾ç¤ºè¡Œå·
 (global-linum-mode 1)
-;; Emacs²ÅÊÇÊÀ½çÉÏ×îÇ¿´óµÄIDE £­ ÖÇÄÜµÄ¸Ä±ä¹â±êÐÎ×´
+;; æ™ºèƒ½çš„æ”¹å˜å…‰æ ‡å½¢çŠ¶
 ;; http://emacser.com/cursor-change.htm
 (require 'cursor-change)
 (cursor-change-mode 1)
@@ -68,7 +71,7 @@
 (global-set-key [f1] 'hs-toggle-hiding)
 (global-set-key [f2] 'info)
 (global-set-key [f3] 'highlight-symbol-next)
-(global-set-key [f4] 'semantic-ia-fast-jump)
+;; (global-set-key [f4] 'semantic-ia-fast-jump)
 (global-set-key [f5] 'compile)
 (global-set-key [f6] 'loop-alpha)
 ;; (global-set-key [f7] 'fill-region)
@@ -162,8 +165,8 @@
       (setq swap-windows-p t)
       (select-window (next-window)))))
 
-;;;; from http://emacser.com/torture-emacs.htm by qiang
 ;; set font
+;; http://emacser.com/torture-emacs.htm by qiang
 (defun qiang-font-existsp (font)
   (if (null (x-list-fonts font))
       nil t))
@@ -208,9 +211,9 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 (if (not (eq system-type 'cygwin))
     (qiang-set-font
      '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=15"
-     '("MicroSoft YaHei" "ÎÄÈªæäµÈ¿íÎ¢Ã×ºÚ" "ºÚÌå" "ËÎÌå" "ÐÂËÎÌå") 16))
+     '("MicroSoft YaHei" "æ–‡æ³‰é©¿ç­‰å®½å¾®ç±³é»‘" "é»‘ä½“" "å®‹ä½“" "æ–°å®‹ä½“") 16))
 
-;;;; Æô¶¯Ê±×Ô¶¯×î´ó»¯
+;;;; å¯åŠ¨æ—¶è‡ªåŠ¨æœ€å¤§åŒ–
 (defun w32-restore-frame ()
   "Restore a minimized frame"
   (interactive)
@@ -328,10 +331,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
                      plain-tex-mode))
            (let ((mark-even-if-inactive transient-mark-mode))
              (indent-region (region-beginning) (region-end) nil))))))
-;;;;
 
 ;;;; transparent, set alpha
-(set-frame-parameter (selected-frame) 'alpha '(75 65))
+;; (set-frame-parameter (selected-frame) 'alpha '(75 65))
 ;; you can define your alpha-list to set the transform
 (setq alpha-list '((100 100) (75 65)))
 
@@ -345,6 +347,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     (setq alpha-list (cdr (append alpha-list (list h))))
     )
   )
+
 ;; Calendar
 (require 'calendar)
 (defun insdate-insert-current-date (&optional omit-day-of-week-p)
@@ -355,13 +358,13 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (insert (calendar-date-string (calendar-current-date) nil
 				omit-day-of-week-p)))
 
-(global-set-key "\C-x\M-d" `insdate-insert-current-date)
+(global-set-key "\C-c\C-d" `insdate-insert-current-date)
 
 ;; code folding
 (dolist (hook '(c-mode-hook
-		c++-mode-hook
-		lua-mode-hook
-		python-mode-hook))
+				c++-mode-hook
+				lua-mode-hook
+				python-mode-hook))
   (add-hook hook (lambda () (hs-minor-mode t))))
 
 ;; auto-fill mode
@@ -379,7 +382,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (setq c++-auto-hungry-initial-state 'none)
   (setq c++-delete-function 'backward-delete-char)
   (setq c++-tab-always-indent t)
-					;  (setq c-indent-level 4)
   (setq c-basic-offset 4)
   (setq c-continued-statement-offset 4)
   (setq c++-empty-arglist-indent 4))
@@ -392,7 +394,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (setq c-delete-function 'backward-delete-char)
   (setq c-tab-always-indent t)
   ;; BSD-ish indentation style
-  ;; (setq c-indent-level 4)
   (setq c-basic-offset 4)
   (setq c-continued-statement-offset 4)
   (setq c-brace-offset -4)
@@ -404,14 +405,14 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 
 ;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
-(load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
-(global-ede-mode t)
+;; (load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
+;; (global-ede-mode t)
 ;; Activate semantic
-(semantic-load-enable-minimum-features)
-(semantic-load-enable-code-helpers)
+;; (semantic-load-enable-minimum-features)
+;; (semantic-load-enable-code-helpers)
 ;; (semantic-load-enable-guady-code-helpers)
 ;; (semantic-load-enable-excessive-code-helpers)
-(semantic-load-enable-semantic-debugging-helpers)
+;; (semantic-load-enable-semantic-debugging-helpers)
 
 ;; * This enables the use of Exuberant ctags if you have it installed.
 ;;   If you use C++ templates or boost, you should NOT enable it.
@@ -437,26 +438,26 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 	    "C:/Program Files/Microsoft SDKs/Windows/v7.0/Include")))
 
 ;; (require 'semantic-c nil 'noerror)
-(let ((include-dirs cedet-user-include-dirs))
-  (when (eq system-type 'windows-nt)
-    (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
-  (mapc (lambda (dir)
-          (semantic-add-system-include dir 'c++-mode)
-          (semantic-add-system-include dir 'c-mode))
-        include-dirs))
+;; (let ((include-dirs cedet-user-include-dirs))
+;;   (when (eq system-type 'windows-nt)
+;;     (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
+;;   (mapc (lambda (dir)
+;;           (semantic-add-system-include dir 'c++-mode)
+;;           (semantic-add-system-include dir 'c-mode))
+;;         include-dirs))
 
 ;; if you want to enable support for gnu global
-(when (cedet-gnu-global-version-check t)
-  (require 'semanticdb-global)
-  (semanticdb-enable-gnu-global-databases 'c-mode)
-  (semanticdb-enable-gnu-global-databases 'c++-mode))
+;; (when (cedet-gnu-global-version-check t)
+;;   (require 'semanticdb-global)
+;;   (semanticdb-enable-gnu-global-databases 'c-mode)
+;;   (semanticdb-enable-gnu-global-databases 'c++-mode))
 
 ;; enable ctags for some languages:
 ;; Unix Shell, Perl, Pascal, Tcl, Fortran, Asm
 ;; (if (eq system-type 'windows-nt)
 ;;     (setq semantic-ectag-program "C:/cygwin/usr/local/bin/ctags.exe"))
-(when (cedet-ectag-version-check)
-  (semantic-load-enable-primary-exuberent-ctags-support))
+;; (when (cedet-ectag-version-check)
+;;   (semantic-load-enable-primary-exuberent-ctags-support))
 
 (setq eassist-header-switches
       '(("h" . ("cpp" "cxx" "c++" "CC" "cc" "C" "c" "mm" "m"))
@@ -486,41 +487,41 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;                                                    "/home/meteor1113/projects/common"
 ;;                                                    "/home/meteor1113/projects/libutil/pub")))
 
-(defun semantic-ia-fast-jump-back ()
-  (interactive)
-  (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
-      (error "Semantic Bookmark ring is currently empty"))
-  (let* ((ring (oref semantic-mru-bookmark-ring ring))
-         (alist (semantic-mrub-ring-to-assoc-list ring))
-         (first (cdr (car alist))))
-    (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
-        (setq first (cdr (car (cdr alist)))))
-    (semantic-mrub-switch-tags first)))
+;; (defun semantic-ia-fast-jump-back ()
+;;   (interactive)
+;;   (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
+;;       (error "Semantic Bookmark ring is currently empty"))
+;;   (let* ((ring (oref semantic-mru-bookmark-ring ring))
+;;          (alist (semantic-mrub-ring-to-assoc-list ring))
+;;          (first (cdr (car alist))))
+;;     (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
+;;         (setq first (cdr (car (cdr alist)))))
+;;     (semantic-mrub-switch-tags first)))
 
-(defun my-cedet-hook ()
-  (local-set-key [(control return)] 'semantic-ia-complete-symbol)
-  (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
-  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-  (local-set-key [M-F4] 'semantic-ia-fast-jump-back)
-  (local-set-key [M-F12] 'eassist-switch-h-cpp)
-  (local-set-key [M-F9] 'semantic-analyze-proto-impl-toggle)
-  (local-set-key (kbd "M-n") 'semantic-ia-complete-symbol-menu)
-  (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
-  (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
-  (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
-  (local-set-key (kbd "C-c , +") 'semantic-tag-folding-show-all)
-  )
+;; (defun my-cedet-hook ()
+;;   (local-set-key [(control return)] 'semantic-ia-complete-symbol)
+;;   (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
+;;   (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
+;;   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
+;;   (local-set-key [M-F4] 'semantic-ia-fast-jump-back)
+;;   (local-set-key [M-F12] 'eassist-switch-h-cpp)
+;;   (local-set-key [M-F9] 'semantic-analyze-proto-impl-toggle)
+;;   (local-set-key (kbd "M-n") 'semantic-ia-complete-symbol-menu)
+;;   (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
+;;   (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
+;;   (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
+;;   (local-set-key (kbd "C-c , +") 'semantic-tag-folding-show-all)
+;;   )
 
-(add-hook 'c-mode-common-hook 'my-cedet-hook)
-(add-hook 'c++-mode-common-hook 'my-cedet-hook)
+;; (add-hook 'c-mode-common-hook 'my-cedet-hook)
+;; (add-hook 'c++-mode-common-hook 'my-cedet-hook)
 
-(defun my-c-mode-cedet-hook ()
-  (if (not (eq system-type 'cygwin))
-      (progn (local-set-key "." 'semantic-complete-self-insert)
-	     (local-set-key ">" 'semantic-complete-self-insert))))
+;; (defun my-c-mode-cedet-hook ()
+;;   (if (not (eq system-type 'cygwin))
+;;       (progn (local-set-key "." 'semantic-complete-self-insert)
+;; 	     (local-set-key ">" 'semantic-complete-self-insert))))
 
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+;; (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 ;;;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -532,7 +533,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
 (if (file-exists-p abbrev-file-name)
     (quietly-read-abbrev-file))
-(setq save-abbrevs t)
 (setq default-abbrev-mode t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -553,9 +553,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   "DOS and WIndows BAT files" t)
 
 ;; jdee
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee-2.4.0.1/lisp"))
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/elib-1.0"))
-(require 'jde)
+;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee-2.4.0.1/lisp"))
+;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/elib-1.0"))
+;; (require 'jde)
 
 ;;;; package management
 (when (> emacs-major-version 23)
@@ -635,44 +635,20 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;(setq ropemacs-local-prefix "C-c C-p")
 
 ;; python-mode
+(add-to-list 'load-path "~/.emacs.d/python-mode")
 (setq py-install-directory "~/.emacs.d/python-mode/")
+;; (setq python-shell-interpreter "D:/Python27/python.exe")
+(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 (setq py-load-pymacs-p t)
 (setq py-smart-operator-mode-p nil)
 (setq py-prepare-autopair-mode-p t)
 (setq py-set-complete-keymap-p t)
+(setq ansi-color-for-comint-mode t)
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 (require 'python-mode)
 
-(add-to-list 'load-path "~/.emacs.d/python-mode/completion/")
-;; (setq ac-sources '(ac-source-pycomplete))
-;; or before the other sources using
-(require 'auto-complete-pycomplete)
-;; (add-to-list 'ac-sources 'ac-source-pycomplete)
-(defun py-load-pycomplete ()
-  "Load Pymacs based pycomplete."
-  (interactive)
-  (let* ((path (getenv "PYTHONPATH"))
-         (py-install-directory (cond ((string= "" py-install-directory)
-                                      (py-guess-py-install-directory))
-                                     (t (py-normalize-directory py-install-directory))))
-         (pycomplete-directory (concat (expand-file-name py-install-directory) "completion")))
-    (if (py-install-directory-check)
-        (progn
-          ;; If the Pymacs process is already running, augment its path.
-          (when (and (get-process "pymacs") (fboundp 'pymacs-exec))
-            (pymacs-exec (concat "sys.path.insert(0, '" pycomplete-directory "')")))
-          (require 'pymacs)
-          (setenv "PYTHONPATH" (concat
-                                pycomplete-directory
-                                (if path (concat path-separator path))))
-          (add-to-list 'load-path pycomplete-directory)
-          (require 'pycomplete)
-          (add-hook 'python-mode-hook 'py-complete-initialize))
-      (error "`py-install-directory' not set, see INSTALL"))))
-
-(py-load-pycomplete)
 
 ;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -712,8 +688,8 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (call-interactively 'iimage-mode))
 
 ;;;; org-remember
-(org-remember-insinuate)
-(setq org-directory "e:/Gerald/orgfiles")
+;; (org-remember-insinuate)
+(setq org-directory "e:/Gerald/Dropbox/Org")
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (setq remember-annotation-functions '(org-remember-annotation))
 (setq remember-handler-functions '(org-remember-handler))
