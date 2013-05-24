@@ -699,6 +699,8 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 (setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 (require 'python-mode)
+(require 'flymake-python-pyflakes)
+(add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
 
 ;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
