@@ -8,17 +8,18 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(bmkp-last-as-first-bookmark-file "/home/gerald/.emacs.d/emacs.bmk")
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/emacs.bmk")
  '(bookmark-default-file "~/.emacs.d/emacs.bmk")
  '(column-number-mode t)
  '(display-time-mode nil)
  '(ecb-layout-window-sizes nil)
  '(ecb-options-version "2.40")
  '(fill-column 80)
+ '(history-length 300)
  '(linum-format " %d ")
  '(menu-bar-mode nil)
- '(py-indent-tabs-mode t)
- '(py-python-command-args (quote ("D:\\\\Python27\\\\Scripts\\\\ipython-script.py")))
+ '(outline-minor-mode-prefix "")
+ '(py-indent-tabs-mode nil)
  '(py-smart-indentation nil)
  '(py-tab-indent t)
  '(save-place t nil (saveplace))
@@ -41,7 +42,8 @@
  '(py-variable-name-face ((t (:inherit font-lock-variable-name-face)))))
 
 ;; change dir to home
-(cd "~/")
+;; (cd "~/tmp")
+(setq default-directory "~/tmp")
 
 ;; add .emacs.d to load-path
 (add-to-list 'load-path "~/.emacs.d/")
@@ -81,9 +83,57 @@
 (global-set-key [f11] 'toggle-full-screen)
 (global-set-key [f12] 'my-theme-cycle)
 (global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-c\C-m" 'execute-extended-command)
 (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
 (defalias 'qrr 'query-replace-regexp)
+
+;;允许使用C-z作为命令前缀
+(define-prefix-command 'ctl-z-map)
+(global-set-key (kbd "C-z") 'ctl-z-map)
+
+;;用C-z i快速打开~/.emacs文件。
+(defun open-init-file ( )
+  (interactive)
+  (find-file "~/.emacs"))
+
+(global-set-key "\C-zi" 'open-init-file)
+
+;;启用ibuffer支持，增强*buffer*
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;;默认进入text-mode，而不是没有什么功能的fundamental-mode
+(setq default-major-mode 'text-mode)
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; turn on orgstruct
+(add-hook 'text-mode-hook 'turn-on-orgstruct++)
+(add-hook 'text-mode-hook 'turn-on-orgtbl)
+
+;;设定语言环境为utf-8
+;; (setq current-language-environment "UTF-8")
+;; ;; (setq default-input-method "chinese-py")
+;; (setq locale-coding-system 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-selection-coding-system 'utf-8)
+;; (prefer-coding-system 'utf-8)
+
+;;打开一个新的shell
+(defun newshell (name)
+  (interactive "sBuffer name: ")
+  (shell name)
+  )
+
+;;用C-z k快速打开自定义的按键说明文件
+(defun open-key-info-file ()
+  (interactive)
+  (split-window-horizontally)
+  (find-file-other-window "~/.emacs.d/emacskeys.txt")
+  (outline-mode)
+  (hide-body))
+
+(global-set-key "\C-zk" 'open-key-info-file)
 
 ;; move line up or down
 (defun move-line-up ()
@@ -122,11 +172,6 @@
 (global-set-key (kbd "C-M-<down>") 'copy-line-down)
 
 ;; pan movement
-(global-set-key '[S-up]     'my-pan-up)
-(global-set-key '[S-down]   'my-pan-down)
-(global-set-key '[S-left]   'my-pan-left)
-(global-set-key '[S-right]  'my-pan-right)
-
 (defun my-pan-up ()
   (interactive)
   (scroll-up 1))
@@ -143,14 +188,19 @@
   (interactive)
   (scroll-right 2))
 
+(global-set-key '[S-up]     'my-pan-up)
+(global-set-key '[S-down]   'my-pan-down)
+(global-set-key '[S-left]   'my-pan-left)
+(global-set-key '[S-right]  'my-pan-right)
+
 ;; swap-buffer
-(global-set-key "\M-t"  'my-swap-buffer)
 (defun my-swap-buffer ()
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 'VISIBLE-OK)))
 
+(global-set-key "\M-t"  'my-swap-buffer)
+
 ;; swap-window
-(global-set-key "\C-t" 'my-swap-window)
 (setq swap-windows-p t)
 (defun my-swap-window ()
   "Switch to the previous window"
@@ -164,6 +214,8 @@
       (message "next windows")
       (setq swap-windows-p t)
       (select-window (next-window)))))
+
+(global-set-key "\C-t" 'my-swap-window)
 
 ;; set font
 ;; http://emacser.com/torture-emacs.htm by qiang
@@ -213,7 +265,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
      '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=15"
      '("MicroSoft YaHei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体") 16))
 
-;;;; 启动时自动最大化
+;; 启动时自动最大化
 (defun w32-restore-frame ()
   "Restore a minimized frame"
   (interactive)
@@ -248,7 +300,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 	 (linux-maximize-frame))
      )
 
-(my-maximize-frame)
+;; 0.5s delay
+(run-with-idle-timer 0.5 nil 'my-maximize-frame)
 
 ;; Full Screen
 (defun toggle-full-screen ()
@@ -259,7 +312,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
   (if (eq system-type 'gnu/linux)
       (linux-fullscreen)))
 
-;;;; Smart copy, if no region active, it simply copy the current whole line
+;; Smart copy, if no region active, it simply copy the current whole line
 (defadvice kill-line (before check-position activate)
   (if (member major-mode
               '(emacs-lisp-mode scheme-mode lisp-mode
@@ -295,7 +348,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (global-set-key (kbd "M-k") 'qiang-copy-line)
 
-;;;; comment-dwim
+;; comment-dwim
 (defun qiang-comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
 If no region is selected and current line is not blank and we are not at the end of the line,
@@ -309,7 +362,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 (global-set-key "\M-;" 'qiang-comment-dwim-line)
 
-;;;; Auto format code yanked
+;; Auto format code yanked
 (dolist (command '(yank yank-pop))
   (eval
    `(defadvice ,command (after indent-region activate)
@@ -332,10 +385,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
            (let ((mark-even-if-inactive transient-mark-mode))
              (indent-region (region-beginning) (region-end) nil))))))
 
-;;;; transparent, set alpha
+;; transparent, set alpha
 ;; (set-frame-parameter (selected-frame) 'alpha '(75 65))
 ;; you can define your alpha-list to set the transform
-(setq alpha-list '((100 100) (75 65)))
+(setq alpha-list '((75 65) (100 100)))
 
 (defun loop-alpha ()
   (interactive)
@@ -368,7 +421,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (add-hook hook (lambda () (hs-minor-mode t))))
 
 ;; auto-fill mode
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 (global-set-key "\C-c\C-f" `fill-region)
 
@@ -404,7 +456,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 
-;; (add-to-list 'load-path "~/.emacs.d/cedet/contrib/")
 ;; (load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
 ;; (global-ede-mode t)
 ;; Activate semantic
@@ -523,12 +574,12 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 
 ;; (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
-;;;; lua-mode
+;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 
-;;;; abbrev-mode
+;; abbrev-mode
 (setq save-abbrevs t)
 (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
 (if (file-exists-p abbrev-file-name)
@@ -541,16 +592,16 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (require 'nasl-mode)
 
 ;; bat-mode
-(setq auto-mode-alist
-      (append
-       (list (cons "\\.[bB][aA][tT]$" 'bat-mode))
-       ;; For DOS init files
-       (list (cons "CONFIG\\."   'bat-mode))
-       (list (cons "AUTOEXEC\\." 'bat-mode))
-       auto-mode-alist))
+;; (setq auto-mode-alist
+;;       (append
+;;        (list (cons "\\.[bB][aA][tT]$" 'bat-mode))
+;;        ;; For DOS init files
+;;        (list (cons "CONFIG\\."   'bat-mode))
+;;        (list (cons "AUTOEXEC\\." 'bat-mode))
+;;        auto-mode-alist))
 
-(autoload 'bat-mode "bat-mode"
-  "DOS and WIndows BAT files" t)
+;; (autoload 'bat-mode "bat-mode"
+;;   "DOS and WIndows BAT files" t)
 
 ;; jdee
 ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee-2.4.0.1/lisp"))
@@ -638,7 +689,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-to-list 'load-path "~/.emacs.d/python-mode")
 (setq py-install-directory "~/.emacs.d/python-mode/")
 ;; (setq python-shell-interpreter "D:/Python27/python.exe")
-(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 (setq py-load-pymacs-p t)
 (setq py-smart-operator-mode-p nil)
 (setq py-prepare-autopair-mode-p t)
@@ -647,8 +697,8 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
+(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 (require 'python-mode)
-
 
 ;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -701,9 +751,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 	("Private" ?p "\n* %^{topic} %T \n%i%?\n" (concat org-directory "/privnotes.org"))
 	))
 
-;;;; turn on orgstruct
-;; (add-hook 'text-mode-hook 'turn-on-orgstruct)
-;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
 
 ;;;; color-theme
 (require 'color-theme)
@@ -747,10 +794,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;;; cygwin-mount
 (if (eq system-type 'windows-nt)
     (progn
-;;       ;; exec-path
-;;       (if (file-directory-p "c:/cygwin/bin")
-;;       	  (add-to-list 'exec-path "c:/cygwin/bin"))
-;;       (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
+      ;; exec-path
+      (if (file-directory-p "c:/cygwin/bin")
+      	  (add-to-list 'exec-path "c:/cygwin/bin"))
+      (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
 
       (require 'cygwin-mount)
       (cygwin-mount-activate)
@@ -763,11 +810,27 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;       ;; For subprocesses invoked via the shell
 ;;       ;; (e.g., "shell -c command")
 ;;       (setq shell-file-name explicit-shell-file-name)
-      (put 'upcase-region 'disabled nil)
-))
+      (put 'upcase-region 'disabled nil)))
+
+
+(defun cygwin-shell ()
+  "Run cygwin bash in shell mode."
+  (interactive)
+  (let ((explicit-shell-file-name "C:/cygwin/bin/bash")
+		(shell-file-name explicit-shell-file-name)
+		(explicit-bash-args '("-login" "-i")))
+    (call-interactively 'shell))
+  (rename-buffer "cygwin-shell"))
+
+
+(add-hook 'sh-mode-hook '(lambda ()
+						   (set-buffer-file-coding-system 'utf-8-unix)))
 
 ;; doc-mode
 ;; (add-hook 'c-mode-common-hook 'doc-mode)
+
+;; batch-mode
+(require 'batch-mode)
 
 ;;;; evernote-mode
 (require 'evernote-mode)
