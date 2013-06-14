@@ -1,6 +1,4 @@
-(setq debug-on-error t)
-;;;; cedet 1.1
-;; (load-file "~/.emacs.d/cedet/common/cedet.el")
+(setq debug-on-error nil)
 
 ;; customize
 (custom-set-variables
@@ -8,22 +6,27 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(artist-aspect-ratio 2)
  '(bmkp-last-as-first-bookmark-file "~/.emacs.d/emacs.bmk")
  '(bookmark-default-file "~/.emacs.d/emacs.bmk")
+ '(buffers-layout-window-sizes nil)
  '(column-number-mode t)
  '(display-time-mode nil)
- '(ecb-layout-window-sizes nil)
+ '(ecb-key-map (quote ("C-z" (t "fh" ecb-history-filter) (t "fs" ecb-sources-filter) (t "fm" ecb-methods-filter) (t "fr" ecb-methods-filter-regexp) (t "ft" ecb-methods-filter-tagclass) (t "fc" ecb-methods-filter-current-type) (t "fp" ecb-methods-filter-protection) (t "fn" ecb-methods-filter-nofilter) (t "fl" ecb-methods-filter-delete-last) (t "ff" ecb-methods-filter-function) (t "p" ecb-nav-goto-previous) (t "n" ecb-nav-goto-next) (t "lc" ecb-change-layout) (t "lr" ecb-redraw-layout) (t "lw" ecb-toggle-ecb-windows) (t "lt" ecb-toggle-layout) (t "s" ecb-window-sync) (t "r" ecb-rebuild-methods-buffer) (t "a" ecb-toggle-auto-expand-tag-tree) (t "x" ecb-expand-methods-nodes) (t "h" ecb-show-help) (t "gl" ecb-goto-window-edit-last) (t "g1" ecb-goto-window-edit1) (t "g2" ecb-goto-window-edit2) (t "gc" ecb-goto-window-compilation) (t "gd" ecb-goto-window-directories) (t "gs" ecb-goto-window-sources) (t "gm" ecb-goto-window-methods) (t "gh" ecb-goto-window-history) (t "ga" ecb-goto-window-analyse) (t "gb" ecb-goto-window-speedbar) (t "md" ecb-maximize-window-directories) (t "ms" ecb-maximize-window-sources) (t "mm" ecb-maximize-window-methods) (t "mh" ecb-maximize-window-history) (t "ma" ecb-maximize-window-analyse) (t "mb" ecb-maximize-window-speedbar) (t "e" eshell) (t "o" ecb-toggle-scroll-other-window-scrolls-compile) (t "\\" ecb-toggle-compile-window) (t "/" ecb-toggle-compile-window-height) (t "," ecb-cycle-maximized-ecb-buffers) (t "." ecb-cycle-through-compilation-buffers))))
  '(ecb-options-version "2.40")
+ '(ecb-tip-of-the-day nil)
  '(fill-column 80)
+ '(flymake-gui-warnings-enabled nil)
  '(history-length 300)
  '(linum-format " %d ")
  '(menu-bar-mode nil)
- '(outline-minor-mode-prefix "")
  '(py-indent-tabs-mode nil)
  '(py-smart-indentation nil)
  '(py-tab-indent t)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
+ '(semantic-default-submodes (quote (global-semantic-highlight-func-mode global-semantic-decoration-mode global-semantic-stickyfunc-mode global-semantic-idle-completions-mode global-semantic-idle-scheduler-mode global-semanticdb-minor-mode global-semantic-idle-summary-mode global-semantic-mru-bookmark-mode global-semantic-idle-local-symbol-highlight-mode)))
+ '(semantic-new-buffer-setup-functions (quote ((c-mode . semantic-default-c-setup) (c++-mode . semantic-default-c-setup) (html-mode . semantic-default-html-setup) (java-mode . wisent-java-default-setup) (js-mode . wisent-javascript-setup-parser) (scheme-mode . semantic-default-scheme-setup) (srecode-template-mode . srecode-template-setup-parser) (texinfo-mode . semantic-default-texi-setup) (makefile-automake-mode . semantic-default-make-setup) (makefile-gmake-mode . semantic-default-make-setup) (makefile-makepp-mode . semantic-default-make-setup) (makefile-bsdmake-mode . semantic-default-make-setup) (makefile-imake-mode . semantic-default-make-setup) (makefile-mode . semantic-default-make-setup))))
  '(server-mode t)
  '(show-paren-mode t)
  '(size-indication-mode t)
@@ -42,12 +45,15 @@
  '(py-variable-name-face ((t (:inherit font-lock-variable-name-face)))))
 
 ;; change dir to home
-;; (cd "~/tmp")
 (setq default-directory "~/tmp")
 
 ;; add .emacs.d to load-path
 (add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/cedet-contrib")
 (add-to-list 'load-path "~/.emacs.d/icicles-ext")
+
+(setq initial-scratch-buffer nil)
+;; (setq initial-buffer-choice default-directory)
 
 ;;使用y or n提问
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -75,13 +81,14 @@
 (global-set-key [f3] 'highlight-symbol-next)
 ;; (global-set-key [f4] 'semantic-ia-fast-jump)
 (global-set-key [f5] 'compile)
-(global-set-key [f6] 'loop-alpha)
+;; (global-set-key [f6] 'loop-alpha)
 ;; (global-set-key [f7] 'fill-region)
 (global-set-key [f8] 'auto-fill-mode)
 (global-set-key [f9] 'ecb-toggle-ecb-windows)
 (global-set-key [f10] 'toggle-menu-bar-mode-from-frame)
 (global-set-key [f11] 'toggle-full-screen)
 (global-set-key [f12] 'my-theme-cycle)
+(global-set-key [M-f12] 'loop-alpha)
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-c\C-m" 'execute-extended-command)
 (global-set-key "\C-w" 'backward-kill-word)
@@ -99,20 +106,26 @@
 
 (global-set-key "\C-zi" 'open-init-file)
 
-;;启用ibuffer支持，增强*buffer*
-(require 'ibuffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+;;用C-z k快速打开自定义的按键说明文件
+(defun open-key-info-file ()
+  (interactive)
+  (split-window-horizontally)
+  (find-file-other-window "~/.emacs.d/emacskeys.txt")
+  (outline-mode)
+  (hide-body))
+
+(global-set-key "\C-zk" 'open-key-info-file)
 
 ;;默认进入text-mode，而不是没有什么功能的fundamental-mode
 (setq default-major-mode 'text-mode)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 ;; turn on orgstruct
-(add-hook 'text-mode-hook 'turn-on-orgstruct++)
-(add-hook 'text-mode-hook 'turn-on-orgtbl)
+;; (add-hook 'text-mode-hook 'turn-on-orgstruct)
+;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
 
 ;;设定语言环境为utf-8
 ;; (setq current-language-environment "UTF-8")
-;; ;; (setq default-input-method "chinese-py")
+;; (setq default-input-method "chinese-py")
 ;; (setq locale-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 ;; (set-keyboard-coding-system 'utf-8)
@@ -124,16 +137,6 @@
   (interactive "sBuffer name: ")
   (shell name)
   )
-
-;;用C-z k快速打开自定义的按键说明文件
-(defun open-key-info-file ()
-  (interactive)
-  (split-window-horizontally)
-  (find-file-other-window "~/.emacs.d/emacskeys.txt")
-  (outline-mode)
-  (hide-body))
-
-(global-set-key "\C-zk" 'open-key-info-file)
 
 ;; move line up or down
 (defun move-line-up ()
@@ -215,7 +218,7 @@
       (setq swap-windows-p t)
       (select-window (next-window)))))
 
-(global-set-key "\C-t" 'my-swap-window)
+(global-set-key (kbd "<C-tab>") 'my-swap-window)
 
 ;; set font
 ;; http://emacser.com/torture-emacs.htm by qiang
@@ -386,9 +389,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
              (indent-region (region-beginning) (region-end) nil))))))
 
 ;; transparent, set alpha
-;; (set-frame-parameter (selected-frame) 'alpha '(75 65))
+(set-frame-parameter (selected-frame) 'alpha '(75 65))
 ;; you can define your alpha-list to set the transform
-(setq alpha-list '((75 65) (100 100)))
+(setq alpha-list '( (100 100) (75 65) ))
 
 (defun loop-alpha ()
   (interactive)
@@ -421,11 +424,11 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (add-hook hook (lambda () (hs-minor-mode t))))
 
 ;; auto-fill mode
-(add-hook 'org-mode-hook 'turn-on-auto-fill)
-(global-set-key "\C-c\C-f" `fill-region)
+(global-set-key "\C-z\C-f" `fill-region)
 
-;; C++ and C mode...
+;; file ass
 (add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.mak\\'" . makefile-mode))
 
 (defun my-c++-mode-hook ()
   (setq tab-width 4)
@@ -456,9 +459,14 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'my-c-mode-hook)
 
-;; (load-file "~/.emacs.d/cedet/contrib/semantic-tag-folding.el")
-;; (global-ede-mode t)
 ;; Activate semantic
+(semantic-mode t)
+(global-ede-mode t)
+
+;; (require 'semantic/sb)
+;; (require 'semantic/bovine/c)
+;; (require 'semantic-tag-folding)
+
 ;; (semantic-load-enable-minimum-features)
 ;; (semantic-load-enable-code-helpers)
 ;; (semantic-load-enable-guady-code-helpers)
@@ -473,7 +481,6 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (semantic-load-enable-primary-exuberent-ctags-support)
 ;;   Add support for using ctags as a backup parser.
 ;; (semantic-load-enable-secondary-exuberent-ctags-support)
-
 ;; Enable SRecode (Template management) minor-mode.
 ;; (global-srecode-minor-mode 1)
 
@@ -482,20 +489,18 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (list ".." "../include" "../inc" "../common" "../public"
         "../.." "../../include" "../../inc" "../../common" "../../public"))
 
-(if (eq system-type 'windows-nt)
-    (defconst cedet-win32-include-dirs
-      (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
+(defconst cedet-win32-include-dirs
+  (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
 	    "C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
-	    "C:/Program Files/Microsoft SDKs/Windows/v7.0/Include")))
+	    "C:/Program Files/Microsoft SDKs/Windows/v7.1A/Include"))
 
-;; (require 'semantic-c nil 'noerror)
-;; (let ((include-dirs cedet-user-include-dirs))
-;;   (when (eq system-type 'windows-nt)
-;;     (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
-;;   (mapc (lambda (dir)
-;;           (semantic-add-system-include dir 'c++-mode)
-;;           (semantic-add-system-include dir 'c-mode))
-;;         include-dirs))
+(let ((include-dirs cedet-user-include-dirs))
+  (when (eq system-type 'windows-nt)
+    (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
+  (mapc (lambda (dir)
+          (semantic-add-system-include dir 'c++-mode)
+          (semantic-add-system-include dir 'c-mode))
+        include-dirs))
 
 ;; if you want to enable support for gnu global
 ;; (when (cedet-gnu-global-version-check t)
@@ -510,6 +515,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (when (cedet-ectag-version-check)
 ;;   (semantic-load-enable-primary-exuberent-ctags-support))
 
+(require 'eassist)
 (setq eassist-header-switches
       '(("h" . ("cpp" "cxx" "c++" "CC" "cc" "C" "c" "mm" "m"))
         ("hh" . ("cc" "CC" "cpp" "cxx" "c++" "C"))
@@ -538,41 +544,44 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;                                                    "/home/meteor1113/projects/common"
 ;;                                                    "/home/meteor1113/projects/libutil/pub")))
 
-;; (defun semantic-ia-fast-jump-back ()
-;;   (interactive)
-;;   (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
-;;       (error "Semantic Bookmark ring is currently empty"))
-;;   (let* ((ring (oref semantic-mru-bookmark-ring ring))
-;;          (alist (semantic-mrub-ring-to-assoc-list ring))
-;;          (first (cdr (car alist))))
-;;     (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
-;;         (setq first (cdr (car (cdr alist)))))
-;;     (semantic-mrub-switch-tags first)))
+(defadvice push-mark (around semantic-mru-bookmark activate)
+  "Push a mark at LOCATION with NOMSG and ACTIVATE passed to `push-mark'.
+If `semantic-mru-bookmark-mode' is active, also push a tag onto
+the mru bookmark stack."
+  (semantic-mrub-push semantic-mru-bookmark-ring
+                      (point)
+                      'mark)
+  ad-do-it)
 
-;; (defun my-cedet-hook ()
-;;   (local-set-key [(control return)] 'semantic-ia-complete-symbol)
-;;   (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
-;;   (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-;;   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-;;   (local-set-key [M-F4] 'semantic-ia-fast-jump-back)
-;;   (local-set-key [M-F12] 'eassist-switch-h-cpp)
-;;   (local-set-key [M-F9] 'semantic-analyze-proto-impl-toggle)
-;;   (local-set-key (kbd "M-n") 'semantic-ia-complete-symbol-menu)
-;;   (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
-;;   (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
-;;   (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
-;;   (local-set-key (kbd "C-c , +") 'semantic-tag-folding-show-all)
-;;   )
+(defun semantic-ia-fast-jump-back ()
+  (interactive)
+  (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
+      (error "Semantic Bookmark ring is currently empty"))
+  (let* ((ring (oref semantic-mru-bookmark-ring ring))
+         (alist (semantic-mrub-ring-to-assoc-list ring))
+         (first (cdr (car alist))))
+    (if (semantic-equivalent-tag-p (oref first tag) (semantic-current-tag))
+        (setq first (cdr (car (cdr alist)))))
+    (semantic-mrub-switch-tags first)))
 
-;; (add-hook 'c-mode-common-hook 'my-cedet-hook)
-;; (add-hook 'c++-mode-common-hook 'my-cedet-hook)
+(defun my-cedet-hook ()
+  (define-key c-mode-base-map (kbd "M-o") 'eassist-switch-h-cpp)
+  (define-key c-mode-base-map (kbd "M-m") 'eassist-list-methods)
+  (local-set-key [(control return)] 'semantic-ia-complete-symbol)
+  (local-set-key "\C-c?" 'semantic-ia-complete-symbol-menu)
+  (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
+  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
+  (local-set-key [f4] 'semantic-ia-fast-jump)
+  (local-set-key [M-f4] 'semantic-ia-fast-jump-back)
+  (local-set-key [M-f9] 'semantic-analyze-proto-impl-toggle)
+  ;; (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
+  ;; (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
+  ;; (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
+  ;; (local-set-key (kbd "C-c , +") 'semantic-tag-folding-show-all)
+  )
 
-;; (defun my-c-mode-cedet-hook ()
-;;   (if (not (eq system-type 'cygwin))
-;;       (progn (local-set-key "." 'semantic-complete-self-insert)
-;; 	     (local-set-key ">" 'semantic-complete-self-insert))))
-
-;; (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+(add-hook 'c-mode-common-hook 'my-cedet-hook)
+(add-hook 'c++-mode-common-hook 'my-cedet-hook)
 
 ;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -648,10 +657,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (global-set-key (kbd "<M-S-right>")  'windmove-right)
 
 ;; auto-complete
-(require 'auto-complete-config)
-(ac-config-default)
-(setq ac-auto-show-menu 0.5)
-(define-key ac-completing-map "\M-/" 'ac-stop)
+;; (require 'pos-tip)
+(require 'auto-complete)
+(require 'auto-complete-settings)
 
 ;; Icicles
 (require 'icicles)
@@ -697,28 +705,34 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
+;; must use ipython-script.py to start ipython on emacs for windows
 (setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 (require 'python-mode)
 (require 'flymake-python-pyflakes)
+
 (add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
+(defun my-python-mode-hook ()
+  (define-key python-mode-map (kbd "M-m") 'eassist-list-methods))
+(add-hook 'python-mode-hook 'my-python-mode-hook)
 
 ;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
 ;;;; iimage mode
-(autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
-(autoload 'turn-on-iimage-mode "iimage" "Turn on Inline image minor mode." t)
+;; (autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
+;; (autoload 'turn-on-iimage-mode "iimage" "Turn on Inline image minor mode." t)
 ;; -- Display images in org mode
 ;; enable image mode first
-(iimage-mode)
+;; (iimage-mode)
 ;; add the org file link format to the iimage mode regex
-(add-to-list 'iimage-mode-image-regex-alist
-	     (cons (concat "\\[\\[file:\\(~?" iimage-mode-image-filename-regex "\\)\\]")  1))
+;; (add-to-list 'iimage-mode-image-regex-alist
+	     ;; (cons (concat "\\[\\[file:\\(~?" iimage-mode-image-filename-regex "\\)\\]")  1))
 
 ;;;; add a hook so we can display images on load
 ;; (add-hook 'org-mode-hook '(lambda () (org-turn-on-iimage-in-org)))
@@ -749,10 +763,9 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (define-key global-map "\C-cr" 'org-remember)
 (setq org-remember-templates
       '(("Todo" ?t "* TODO %? %^g\n %i\n " (concat org-directory "/newgtd.org") "Office")
-	("Book" ?b "\n* %^{Book Title} %t :READING: \n%[l:/booktemp.txt]\n" (concat org-directory "book.org"))
-	("Private" ?p "\n* %^{topic} %T \n%i%?\n" (concat org-directory "/privnotes.org"))
-	))
-
+		("Book" ?b "\n* %^{Book Title} %t :READING: \n%[l:/booktemp.txt]\n" (concat org-directory "book.org"))
+		("Private" ?p "\n* %^{topic} %T \n%i%?\n" (concat org-directory "/privnotes.org"))
+		))
 
 ;;;; color-theme
 (require 'color-theme)
@@ -793,7 +806,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets/")
 (yas-global-mode 1)
 
-;;;; cygwin-mount
+;; cygwin-mount
 (if (eq system-type 'windows-nt)
     (progn
       ;; exec-path
@@ -802,6 +815,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
       (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
 
       (require 'cygwin-mount)
+	  (setq cygwin-mount-build-mount-table-asynch t)
       (cygwin-mount-activate)
 
       (add-hook 'comint-output-filter-functions
@@ -814,7 +828,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;;       (setq shell-file-name explicit-shell-file-name)
       (put 'upcase-region 'disabled nil)))
 
-
+;; open a bash shell buffer
 (defun cygwin-shell ()
   "Run cygwin bash in shell mode."
   (interactive)
@@ -824,7 +838,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     (call-interactively 'shell))
   (rename-buffer "cygwin-shell"))
 
-
+;; bash shell script using utf-8 codec
 (add-hook 'sh-mode-hook '(lambda ()
 						   (set-buffer-file-coding-system 'utf-8-unix)))
 
@@ -835,16 +849,37 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 (require 'batch-mode)
 
 ;;;; evernote-mode
-(require 'evernote-mode)
-(setq evernote-username "dsjlzh") ; optional: you can use this username as default.
-(setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
-(global-set-key "\C-cec" 'evernote-create-note)
-(global-set-key "\C-ceo" 'evernote-open-note)
-(global-set-key "\C-ces" 'evernote-search-notes)
-(global-set-key "\C-ceS" 'evernote-do-saved-search)
-(global-set-key "\C-cew" 'evernote-write-note)
-(global-set-key "\C-cep" 'evernote-post-region)
-(global-set-key "\C-ceb" 'evernote-browser)
+;; (require 'evernote-mode)
+;; (setq evernote-username "dsjlzh") ; optional: you can use this username as default.
+;; (setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
+;; (global-set-key "\C-cec" 'evernote-create-note)
+;; (global-set-key "\C-ceo" 'evernote-open-note)
+;; (global-set-key "\C-ces" 'evernote-search-notes)
+;; (global-set-key "\C-ceS" 'evernote-do-saved-search)
+;; (global-set-key "\C-cew" 'evernote-write-note)
+;; (global-set-key "\C-cep" 'evernote-post-region)
+;; (global-set-key "\C-ceb" 'evernote-browser)
 
-;; (require 'save-visited-files)
+;;启用ibuffer支持，增强*buffer*
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; artist-mode
+(defun my-artist-mode-hook ()
+  (progn (local-set-key "\C-c \C-SPC" 'artist-key-set-point)))
+
+(add-hook 'artist-mode-hook 'my-artist-mode-hook)
+
+;; enable features
+(put 'narrow-to-region 'disabled nil)
+
+;; ecb activate
+(ecb-activate)
+(ecb-toggle-ecb-windows)
+;; save-visited-files
+(defun save-visited-files-mode-fix-ecb ()
+  (if (and save-visited-files-mode ecb-minor-mode)
+	  (ecb-rebuild-methods-buffer)))
+
+(add-hook 'auto-save-hook 'save-visited-files-mode-fix-ecb)
 (turn-on-save-visited-files-mode)
