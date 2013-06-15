@@ -22,6 +22,14 @@
 ;; Full Screen
 (global-set-key [f11] 'linux-fullscreen)
 
+(defconst cedet-linux-include-dirs
+  (list "/usr/include" "/usr/local/include" "/usr/src/linux-headers/include"))
+
+(mapc (lambda (dir)
+		(semantic-add-system-include dir 'c++-mode)
+		(semantic-add-system-include dir 'c-mode))
+	  cedet-linux-include-dirs)
+
 ;; flymake
 (setq flymake-allowed-file-name-masks '())
 (when (executable-find "texify")
