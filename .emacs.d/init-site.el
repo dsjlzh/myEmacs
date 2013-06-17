@@ -126,8 +126,6 @@
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
-;; must use ipython-script.py to start ipython on emacs for windows
-(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 (require 'python-mode)
 (require 'flymake-python-pyflakes)
 
@@ -147,17 +145,16 @@
 
 ;;;; org-remember
 ;; (org-remember-insinuate)
-(setq org-directory "e:/Gerald/Dropbox/Org")
+(setq org-directory "~/Dropbox/Org")
 (setq org-default-notes-file (concat org-directory "/notes.org"))
+(setq org-remember-templates
+      '(("Todo" ?t "* TODO %? %^g\n %i\n " (concat org-directory "/newgtd.org") "Office")
+		("Book" ?b "\n* %^{Book Title} %t :READING: \n%[l:/booktemp.txt]\n" (concat org-directory "book.org"))
+		("Private" ?p "\n* %^{topic} %T \n%i%?\n" (concat org-directory "/privnotes.org"))))
 (setq remember-annotation-functions '(org-remember-annotation))
 (setq remember-handler-functions '(org-remember-handler))
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 (define-key global-map "\C-cr" 'org-remember)
-(setq org-remember-templates
-      '(("Todo" ?t "* TODO %? %^g\n %i\n " (concat org-directory "/newgtd.org") "Office")
-		("Book" ?b "\n* %^{Book Title} %t :READING: \n%[l:/booktemp.txt]\n" (concat org-directory "book.org"))
-		("Private" ?p "\n* %^{topic} %T \n%i%?\n" (concat org-directory "/privnotes.org"))
-		))
 
 ;;;; color-theme
 (require 'color-theme)

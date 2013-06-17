@@ -55,6 +55,9 @@
 ;; (add-hook 'sh-mode-hook '(lambda ()
 ;; 						   (set-buffer-file-coding-system 'utf-8-unix)))
 
+;; must use ipython-script.py to start ipython on emacs for windows
+(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
+
 ;; batch-mode
 (require 'batch-mode)
 
