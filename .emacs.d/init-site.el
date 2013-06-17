@@ -90,6 +90,11 @@
 (require 'autopair)
 (autopair-global-mode t)
 
+;; flymake
+(global-set-key "\C-z\C-e" 'flymake-display-err-menu-for-current-line)
+(global-set-key "\C-z\C-n" 'flymake-goto-next-error)
+(global-set-key "\C-z\C-p" 'flymake-goto-prev-error)
+
 ;; graphviz-dot-mode
 (add-hook 'graphviz-dot-mode-hook
 		  #'(lambda () (setq autopair-dont-activate t)))
@@ -203,11 +208,11 @@
 (global-set-key [f9] 'ecb-toggle-ecb-windows)
 
 ;; save-visited-files
-(defun save-visited-files-mode-fix-ecb ()
-  (if (and save-visited-files-mode ecb-minor-mode)
-	  (ecb-rebuild-methods-buffer)))
+;; (defun save-visited-files-mode-fix-ecb ()
+;;   (if (and save-visited-files-mode ecb-minor-mode)
+;; 	  (ecb-rebuild-methods-buffer)))
 
-(add-hook 'auto-save-hook 'save-visited-files-mode-fix-ecb)
+;; (add-hook 'auto-save-hook 'save-visited-files-mode-fix-ecb)
 (turn-on-save-visited-files-mode)
 
 ;; doc-mode
