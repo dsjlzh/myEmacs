@@ -199,7 +199,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 (if (not (eq system-type 'cygwin))
     (qiang-set-font
      '("Consolas" "Monaco" "DejaVu Sans Mono" "Monospace" "Courier New") ":pixelsize=15"
-     '("MicroSoft YaHei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体") 16))
+     '("Hiragino Sans GB" "MicroSoft YaHei" "文泉驿等宽微米黑" "黑体" "宋体" "新宋体") 16))
 
 ;; Smart copy, if no region active, it simply copy the current whole line
 (defadvice kill-line (before check-position activate)
@@ -310,6 +310,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; file associate
 (add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("\\.mak\\'" . makefile-mode))
+(add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
 
 ;; cc-mode hook
 (defun my-c++-mode-hook ()

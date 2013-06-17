@@ -1,0 +1,29 @@
+;; exec-path
+(add-to-list 'exec-path "/Users/gerald/Library/Python/2.7/bin")
+(add-to-list 'exec-path "/user/local/bin")
+(setenv "PATH" (concat "/use/local/bin:/Users/gerald/Library/Python/2.7/bin:" (getenv "PATH")))
+
+(defun mac-maximize-frame ()
+  "Toggle full screen"
+  (interactive)
+  (set-frame-parameter
+   nil 'fullscreen 'maximized))
+
+(defun mac-toggle-fullscreen ()
+  "Toggle full screen"
+  (interactive)
+  (set-frame-parameter
+   nil 'fullscreen
+   (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+
+(run-with-idle-timer 0.5 nil 'mac-maximize-frame)
+
+;; Full Screen
+(global-set-key [f11] 'mac-toggle-fullscreen)
+
+;; objc-mode
+(add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
+(add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@interface" . objc-mode))
+(add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
+
+(provide 'init-osx)
