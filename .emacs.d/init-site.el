@@ -25,8 +25,8 @@
         ("mm" . ("h"))))
 
 (defun my-eassist-hook ()
-  (define-key c-mode-base-map (kbd "M-o") 'eassist-switch-h-cpp)
-  (define-key c-mode-base-map (kbd "M-m") 'eassist-list-methods))
+  (define-key c-mode-base-map (kbd "M-o") 'eassist-switch-h-cpp))
+  ;; (define-key c-mode-base-map (kbd "M-m") 'eassist-list-methods))
 
 (add-hook 'c-mode-common-hook 'my-eassist-hook)
 (add-hook 'c++-mode-common-hook 'my-eassist-hook)
@@ -84,6 +84,17 @@
 
 ;; Icicles
 (require 'icicles)
+(defun bind-my-icicles-keys ()
+  "Replace some default Icicles minibuffer bindings with others."
+  (dolist (map (append (list minibuffer-local-completion-map
+  							 minibuffer-local-must-match-map)
+  					   (and (fboundp 'minibuffer-local-filename-completion-map)
+  							(list minibuffer-local-filename-completion-map))))
+  	(when icicle-mode
+  	  (define-key map (icicle-kbd "f11") 'previous-history-element)
+  	  (define-key map (icicle-kbd "f12") 'next-history-element))))
+
+(add-hook 'icicle-mode-hook 'bind-my-icicles-keys)
 (icy-mode t)
 
 ;; autopair
@@ -91,13 +102,47 @@
 (autopair-global-mode t)
 
 ;; flymake
-(global-set-key "\C-z\C-e" 'flymake-display-err-menu-for-current-line)
-(global-set-key "\C-z\C-n" 'flymake-goto-next-error)
-(global-set-key "\C-z\C-p" 'flymake-goto-prev-error)
+(autoload 'flymake-find-file-hook "flymake" "" t)
+(add-hook 'find-file-hook 'flymake-find-file-hook)
+(setq flymake-gui-warnings-enabled nil)
+(setq flymake-log-level 0)
+
+(defun flymake-display-current-error ()
+  "Display errors/warnings under cursor."
+  (interactive)
+  (let ((ovs (overlays-in (point) (1+ (point)))))
+    (catch 'found
+      (dolist (ov ovs)
+        (when (flymake-overlay-p ov)
+          (message (overlay-get ov 'help-echo))
+          (throw 'found t))))))
+
+(defun flymake-goto-next-error-disp ()
+  "Go to next error in err ring, then display error/warning."
+  (interactive)
+  (flymake-goto-next-error)
+  (flymake-display-current-error))
+
+(defun flymake-goto-prev-error-disp ()
+  "Go to previous error in err ring, then display error/warning."
+  (interactive)
+  (flymake-goto-prev-error)
+  (flymake-display-current-error))
+
+(defvar flymake-mode-map (make-sparse-keymap))
+(define-key flymake-mode-map (kbd "<f6>") 'flymake-goto-next-error-disp)
+(define-key flymake-mode-map (kbd "<S-f6>") 'flymake-goto-prev-error-disp)
+(define-key flymake-mode-map (kbd "<C-f6>") 'flymake-display-err-menu-for-current-line)
+
+(or (assoc 'flymake-mode minor-mode-map-alist)
+    (setq minor-mode-map-alist
+          (cons (cons 'flymake-mode flymake-mode-map)
+                minor-mode-map-alist)))
 
 ;; graphviz-dot-mode
 (add-hook 'graphviz-dot-mode-hook
 		  #'(lambda () (setq autopair-dont-activate t)))
+
 (setq graphviz-dot-auto-indent-on-semi nil)
 
 ;; pymacs
@@ -133,20 +178,27 @@
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
 (require 'python-mode)
 (require 'flymake-python-pyflakes)
-
 (add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
-(defun my-python-mode-hook ()
-  (define-key python-mode-map (kbd "M-m") 'eassist-list-methods))
-(add-hook 'python-mode-hook 'my-python-mode-hook)
+
+;; (defun my-python-mode-hook ()
+;;   (define-key python-mode-map (kbd "M-m") 'eassist-list-methods))
+
+;; (add-hook 'python-mode-hook 'my-python-mode-hook)
 
 ;;;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
+
+(defun my-org-mode-hook()
+  (local-set-key "\C-cl" 'org-store-link)
+  (local-set-key "\C-cc" 'org-capture)
+  (local-set-key "\C-ca" 'org-agenda)
+  (local-set-key "\C-cb" 'org-iswitchb)
+  ;; org-edit-special default key is conflict with icicle-occur
+  (local-set-key "\C-z'" 'org-edit-special))
+
+(add-hook 'org-mode-hook 'my-org-mode-hook)
 
 ;;;; org-remember
 ;; (org-remember-insinuate)

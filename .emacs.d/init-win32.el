@@ -72,4 +72,20 @@
 		(semantic-add-system-include dir 'c-mode))
 	  cedet-win32-include-dirs)
 
+;; checking C/C++ mode for VC
+(defun flymake-vc-init ()
+  (flymake-simple-make-init-impl 'flymake-create-temp-inplace t t
+								 (file-name-nondirectory buffer-file-name)
+								 'flymake-get-vc-cmdline))
+
+(defun flymake-get-vc-cmdline (source base-dir)
+  (list "vcl" (list "/W3" (concat base-dir source))))
+;;;; need create vcl.bat in system path
+;; @echo off
+;; @call "D:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+;; cl /c /EHsc /nologo /Od /Oy- /RTC1 %1 %2 %3 %4 %5 %6 %7 %8 %9
+
+(add-to-list 'flymake-allowed-file-name-masks
+			 '("\\.\\(?:c\\(?:pp\\|xx\\|\\+\\+\\)?\\|CC\\)\\'" flymake-vc-init))
+
 (provide 'init-win32)
