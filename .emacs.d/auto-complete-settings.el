@@ -22,10 +22,12 @@
 (global-auto-complete-mode 1)
 (setq ac-dwim t)
 ;; (setq ac-candidate-max ac-candidate-menu-height)
+(setq ac-modes (append ac-modes '(objc-mode)))
 
-;; ²»ÈÃ»Ø³µµÄÊ±ºòÖ´ĞĞ`ac-complete', ÒòÎªµ±ÄãÊäÈëÍêÒ»¸ö
-;; µ¥´ÊµÄÊ±ºò, ºÜÓĞ¿ÉÄÜ²¹È«²Ëµ¥»¹ÔÚ, ÕâÊ±ºòÄãÒª»Ø³µµÄ»°,
-;; ±ØĞëÒª¸Éµô²¹È«²Ëµ¥, ºÜÂé·³, ÓÃM-jÀ´Ö´ĞĞ`ac-complete'
+;; hook
+;; ä¸è®©å›è½¦çš„æ—¶å€™æ‰§è¡Œ`ac-complete', å› ä¸ºå½“ä½ è¾“å…¥å®Œä¸€ä¸ª
+;; å•è¯çš„æ—¶å€™, å¾ˆæœ‰å¯èƒ½è¡¥å…¨èœå•è¿˜åœ¨, è¿™æ—¶å€™ä½ è¦å›è½¦çš„è¯,
+;; å¿…é¡»è¦å¹²æ‰è¡¥å…¨èœå•, å¾ˆéº»çƒ¦, ç”¨M-jæ¥æ‰§è¡Œ`ac-complete'
 ;; (define-key ac-complete-mode-map "<return>"   'nil)
 ;; (define-key ac-complete-mode-map "RET"        'nil)
 ;; (define-key ac-complete-mode-map "M-j"        'ac-complete)
@@ -41,7 +43,8 @@
 ;; Complete member name by C-z . for C++ mode.
 (add-hook 'c++-mode
 		  (lambda ()
-			(add-to-list 'ac-sources 'ac-source-semantic-raw)))
+			;; (add-to-list 'ac-sources 'ac-source-semantic-raw)
+			(push 'ac-source-semantic ac-sources)))
 
 (defun semantic-and-gtags-complete ()
   (interactive)
@@ -50,6 +53,15 @@
 (add-hook 'c++-mode-hook
 		  (lambda ()
 			(local-set-key (kbd "C-z .") 'semantic-and-gtags-complete)))
+
+(require 'auto-complete-clang-async)
+
+(add-hook 'objc-mode-hook
+		  (lambda ()
+			;; ä½¿ç”¨ XCode çš„è¡¥å…¨åŠŸèƒ½æœ‰æ•ˆ
+			(push 'ac-source-clang-async ac-sources)
+			;; C++ å…³é”®è¯è¡¥å…¨
+			(push 'ac-source-c++-keywords ac-sources)))
 
 ;; Complete file name by C-c /
 (global-set-key (kbd "C-z /") 'ac-complete-filename)
