@@ -60,3 +60,5 @@
 	(load "init-win32" 'noerror))
 (if (eq system-type 'gnu/linux)
 	(load "init-linux" 'noerror))
+(if (eq system-type 'darwin)
+	(load "init-osx" 'noerror))
