@@ -61,4 +61,15 @@
 ;; batch-mode
 (require 'batch-mode)
 
+;; include path
+(defconst cedet-win32-include-dirs
+  (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
+	    "D:/Program Files/Microsoft Visual Studio 10.0/VC/include"
+	    "C:/Program Files/Microsoft SDKs/Windows/v7.1A/Include"))
+
+(mapc (lambda (dir)
+		(semantic-add-system-include dir 'c++-mode)
+		(semantic-add-system-include dir 'c-mode))
+	  cedet-win32-include-dirs)
+
 (provide 'init-win32)

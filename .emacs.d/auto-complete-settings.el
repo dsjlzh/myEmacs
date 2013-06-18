@@ -1,7 +1,7 @@
 ;;---------------------auto complete-------------------
 ;; http://blog.csdn.net/killiori/article/details/5721868
 (require 'auto-complete-config)
-;; (add-to-list 'ac-dictionary-directories "/home/hjz/.emacs.d//ac-dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
 
 ;; Show 0.5 second later
@@ -31,21 +31,14 @@
 ;; (define-key ac-complete-mode-map "M-j"        'ac-complete)
 ;; (define-key ac-complete-mode-map "<C-return>" 'ac-complete)
 
-(define-key ac-complete-mode-map "/M-n"        'ac-next)
-(define-key ac-complete-mode-map "/M-p"        'ac-previous)
-
 (set-default 'ac-sources
-			 '(ac-source-semantic
-			   ac-source-yasnippet
+			 '(ac-source-words-in-buffer
+			   ac-source-words-in-same-mode-buffers
+			   ac-source-semantic
 			   ac-source-abbrev
-			   ac-source-words-in-buffer
-			   ;; ac-source-words-in-all-buffer
-			   ac-source-imenu
-			   ;; ac-source-files-in-current-dir
-			   ;; ac-source-filename
-			   ))
+			   ac-source-yasnippet))
 
-;; Complete member name by C-c . for C++ mode.
+;; Complete member name by C-z . for C++ mode.
 (add-hook 'c++-mode
 		  (lambda ()
 			(add-to-list 'ac-sources 'ac-source-semantic-raw)))
@@ -75,6 +68,7 @@
 
 (dolist (command `(backward-delete-char-untabify delete-backward-char))
   (add-to-list 'ac-trigger-commands command))
+
 ;; if you want enable auto-complete at org-mode, uncomment this line
 (add-to-list 'ac-trigger-commands 'org-self-insert-command)
 

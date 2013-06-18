@@ -28,7 +28,7 @@
 (global-set-key "\C-zk" 'open-key-info-file)
 
 ;; change dir to home
-(setq default-directory "~/tmp")
+(setq default-directory "~/")
 
 (setq initial-scratch-buffer nil)
 ;; (setq initial-buffer-choice default-directory)
@@ -302,10 +302,10 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
   (insert (calendar-date-string (calendar-current-date) nil
 								omit-day-of-week-p)))
 
-(global-set-key "\C-c\C-d" `insdate-insert-current-date)
+(global-set-key "\C-zd" `insdate-insert-current-date)
 
 ;; auto-fill mode
-(global-set-key "\C-z\C-f" `fill-region)
+(global-set-key "\C-zf" `fill-region)
 
 ;; file associate
 (add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
@@ -368,22 +368,23 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; (global-srecode-minor-mode 1)
 
 (setq semanticdb-project-roots (list (expand-file-name "/")))
+
 (defconst cedet-user-include-dirs
   (list ".." "../include" "../inc" "../common" "../public"
         "../.." "../../include" "../../inc" "../../common" "../../public"))
 
-(defconst cedet-win32-include-dirs
-  (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
-	    "C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
-	    "C:/Program Files/Microsoft SDKs/Windows/v7.1A/Include"))
+(mapc (lambda (dir)
+		(semantic-add-system-include dir 'c++-mode)
+		(semantic-add-system-include dir 'c-mode))
+	  cedet-user-include-dirs)
 
-(let ((include-dirs cedet-user-include-dirs))
-  (when (eq system-type 'windows-nt)
-    (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
-  (mapc (lambda (dir)
-          (semantic-add-system-include dir 'c++-mode)
-          (semantic-add-system-include dir 'c-mode))
-        include-dirs))
+;; (let ((include-dirs cedet-user-include-dirs))
+;;   (when (eq system-type 'windows-nt)
+;;     (setq include-dirs (append include-dirs cedet-win32-include-dirs)))
+;;   (mapc (lambda (dir)
+;;           (semantic-add-system-include dir 'c++-mode)
+;;           (semantic-add-system-include dir 'c-mode))
+;;         include-dirs))
 
 ;; if you want to enable support for gnu global
 ;; (when (cedet-gnu-global-version-check t)
