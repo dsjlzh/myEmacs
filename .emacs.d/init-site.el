@@ -39,18 +39,6 @@
 ;; nasl-mode
 (require 'nasl-mode)
 
-;; bat-mode
-;; (setq auto-mode-alist
-;;       (append
-;;        (list (cons "\\.[bB][aA][tT]$" 'bat-mode))
-;;        ;; For DOS init files
-;;        (list (cons "CONFIG\\."   'bat-mode))
-;;        (list (cons "AUTOEXEC\\." 'bat-mode))
-;;        auto-mode-alist))
-
-;; (autoload 'bat-mode "bat-mode"
-;;   "DOS and WIndows BAT files" t)
-
 ;; jdee
 ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee-2.4.0.1/lisp"))
 ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/elib-1.0"))
