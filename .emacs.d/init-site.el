@@ -40,9 +40,10 @@
 (require 'nasl-mode)
 
 ;; jdee
-;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee-2.4.0.1/lisp"))
-;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/elib-1.0"))
-;; (require 'jde)
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee/lisp"))
+(autoload 'jde-mode "jde" "JDE mode" t)
+(setq auto-mode-alist
+	  (append '(("\\.java\\'" . jde-mode)) auto-mode-alist))
 
 ;; Crosshair
 (global-hl-line-mode t)
