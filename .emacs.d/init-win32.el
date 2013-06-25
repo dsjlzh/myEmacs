@@ -24,8 +24,9 @@
 ;; cygwin-mount
 ;; exec-path
 (if (file-directory-p "c:/cygwin/bin")
-	(add-to-list 'exec-path "c:/cygwin/bin"))
-(setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
+	(progn
+	  (add-to-list 'exec-path "c:/cygwin/bin")
+	  (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))))
 
 (require 'cygwin-mount)
 (setq cygwin-mount-build-mount-table-asynch t)
@@ -56,7 +57,7 @@
 ;; 						   (set-buffer-file-coding-system 'utf-8-unix)))
 
 ;; must use ipython-script.py to start ipython on emacs for windows
-(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
+(setq py-python-command-args '("-i" "C:/Python27/Scripts/ipython-script.py"))
 
 ;; batch-mode
 (require 'batch-mode)
@@ -64,8 +65,8 @@
 ;; include path
 (defconst cedet-win32-include-dirs
   (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
-	    "D:/Program Files/Microsoft Visual Studio 10.0/VC/include"
-	    "C:/Program Files/Microsoft SDKs/Windows/v7.1A/Include"))
+	    "E:/Program Files/Microsoft Visual Studio 9.0/VC/include"
+	    "E:/Program Files/Microsoft SDKs/Windows/v7.0/Include"))
 
 (mapc (lambda (dir)
 		(semantic-add-system-include dir 'c++-mode)
@@ -87,5 +88,6 @@
 
 (add-to-list 'flymake-allowed-file-name-masks
 			 '("\\.\\(?:c\\(?:pp\\|xx\\|\\+\\+\\)?\\|CC\\)\\'" flymake-vc-init))
+(add-hook 'find-file-hook 'flymake-find-file-hook)
 
 (provide 'init-win32)
