@@ -1,17 +1,30 @@
 ;;;; emacs setting only depending on build-in packages
 
+;; (require 'trace)
+
 ;; global keymaps
 (global-set-key [f2] 'info)
 (global-set-key [f5] 'compile)
 (global-set-key [f10] 'toggle-menu-bar-mode-from-frame)
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-c\C-m" 'execute-extended-command)
-(global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-w" 'backward-kill-word)
 (defalias 'qrr 'query-replace-regexp)
 
+;; newline-withoug-break-of-line
+(defun newline-without-break-of-line ()
+  "1. remove to end of the line.
+  2. insert newline with index"
+  (interactive)
+  (let ((oldpos (point)))
+    (end-of-line)
+    (newline-and-indent)))
+
+(global-set-key (kbd "<C-return>") 'newline-without-break-of-line)
+
 ;;用C-z i快速打开~/.emacs文件。
-(defun open-init-file ( )
+(defun open-init-file ()
   (interactive)
   (find-file "~/.emacs"))
 
@@ -32,7 +45,7 @@
 
 (setq initial-scratch-buffer nil)
 ;; (setq initial-buffer-choice default-directory)
-
+(setq next-line-add-newlines t)
 ;;使用y or n提问
 (fset 'yes-or-no-p 'y-or-n-p)
 ;;关闭开启画面
@@ -57,34 +70,34 @@
 ;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
 
 ;;设定语言环境为utf-8
-(setq current-language-environment "UTF-8")
-;; (setq default-input-method "chinese-py")
+(setq utf-translate-cjk-mode nil) ; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
+(set-language-environment 'utf-8)
 (setq locale-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
+(unless (eq system-type 'windows-nt)
+  (set-selection-coding-system 'utf-8))
 (prefer-coding-system 'utf-8)
 
 ;;打开一个新的shell
 (defun newshell (name)
   (interactive "sBuffer name: ")
-  (shell name)
-  )
+  (shell name))
 
-;; move line up or down
-(defun move-line-up ()
-  (interactive)
-  (transpose-lines 1)
-  (forward-line -2))
+;; move line up or down ;; replace by move-text package
+;; (defun move-line-up ()
+;;   (interactive)
+;;   (transpose-lines 1)
+;;   (forward-line -2))
 
-(defun move-line-down ()
-  (interactive)
-  (forward-line 1)
-  (transpose-lines 1)
-  (forward-line -1))
+;; (defun move-line-down ()
+;;   (interactive)
+;;   (forward-line 1)
+;;   (transpose-lines 1)
+;;   (forward-line -1))
 
-(global-set-key (kbd "M-<up>") 'move-line-up)
-(global-set-key (kbd "M-<down>") 'move-line-down)
+;; (global-set-key (kbd "M-<up>") 'move-line-up)
+;; (global-set-key (kbd "M-<down>") 'move-line-down)
 
 ;; copy line from above
 (autoload 'copy-from-above-command "misc"
@@ -275,9 +288,12 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
              (indent-region (region-beginning) (region-end) nil))))))
 
 ;; transparent, set alpha
-(set-frame-parameter (selected-frame) 'alpha '(75 65))
+(set-frame-parameter (selected-frame) 'alpha '(nil nil))
+(set-frame-parameter (selected-frame) 'frame-alpha-lower-limit 50)
+(set-frame-parameter (selected-frame) 'screen-gamma 2.7)
+
 ;; you can define your alpha-list to set the transform
-(setq alpha-list '( (100 100) (75 65) ))
+(setq alpha-list '((100 100) (75 75)))
 
 (defun loop-alpha ()
   (interactive)
@@ -290,7 +306,7 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
     )
   )
 
-(global-set-key [M-f12] 'loop-alpha)
+(global-set-key [f12] 'loop-alpha)
 
 ;; Calendar
 (require 'calendar)
@@ -426,7 +442,6 @@ the mru bookmark stack."
   (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
   (local-set-key "\C-cg" 'semantic-ia-fast-jump)
   (local-set-key "\C-cu" 'semantic-ia-fast-jump-back)
-  (local-set-key [M-f9] 'semantic-analyze-proto-impl-toggle)
   ;; (local-set-key (kbd "C-c , -") 'semantic-tag-folding-fold-block)
   ;; (local-set-key (kbd "C-c , =") 'semantic-tag-folding-show-block)
   ;; (local-set-key (kbd "C-c , _") 'semantic-tag-folding-fold-all)
@@ -504,6 +519,19 @@ the mru bookmark stack."
 
 ;; enable features
 (put 'narrow-to-region 'disabled nil)
+
+;; (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+(require 'tramp)
+(setq password-cache nil)
+(setq tramp-persistency-file-name "~/.emacs.d/my_tramp")
+(setq tramp-default-method "plink")
+(setq tramp-default-user "gerald"
+	  tramp-default-host "my162")
+(add-to-list 'tramp-default-user-alist
+			 '(nil ".*mydev\\'" "lizhixin")
+			 '(nil ".*my1.*\\'" "gerald"))
+
+;; (add-to-list 'tramp-remote-path "/bin")
 
 ;; (setq libutil-project
 ;;       (ede-cpp-root-project "libutil"

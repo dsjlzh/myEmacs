@@ -24,9 +24,8 @@
 ;; cygwin-mount
 ;; exec-path
 (if (file-directory-p "c:/cygwin/bin")
-	(progn
-	  (add-to-list 'exec-path "c:/cygwin/bin")
-	  (setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))))
+	(add-to-list 'exec-path "c:/cygwin/bin"))
+(setenv "PATH" (concat "c:/cygwin/bin;" (getenv "PATH")))
 
 (require 'cygwin-mount)
 (setq cygwin-mount-build-mount-table-asynch t)
@@ -53,11 +52,27 @@
   (rename-buffer "cygwin-shell"))
 
 ;; bash shell script using utf-8 codec
-;; (add-hook 'sh-mode-hook '(lambda ()
-;; 						   (set-buffer-file-coding-system 'utf-8-unix)))
+(add-hook 'sh-mode-hook '(lambda ()
+						   (set-buffer-file-coding-system 'utf-8-unix)))
+
+(defun toggle-utf8-gbk ()
+  (interactive)
+  (if (or (equal buffer-file-coding-system 'utf-8)
+		  (equal buffer-file-coding-system 'utf-8-dos)
+		  (equal buffer-file-coding-system 'utf-8-unix))
+      (progn
+		(set-buffer-file-coding-system 'gbk-dos)
+        (revert-buffer-with-coding-system 'gbk-dos)
+        (message "buffer converted to gbk"))
+	(progn
+	  (set-buffer-file-coding-system 'utf-8)
+	  (revert-buffer-with-coding-system 'utf-8)
+	  (message "buffer converted to utf-8"))))
+
+(global-set-key "\C-zg" 'toggle-utf8-gbk)
 
 ;; must use ipython-script.py to start ipython on emacs for windows
-(setq py-python-command-args '("-i" "C:/Python27/Scripts/ipython-script.py"))
+(setq py-python-command-args '("-i" "D:/Python27/Scripts/ipython-script.py"))
 
 ;; batch-mode
 (require 'batch-mode)
@@ -65,8 +80,8 @@
 ;; include path
 (defconst cedet-win32-include-dirs
   (list "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include"
-	    "E:/Program Files/Microsoft Visual Studio 9.0/VC/include"
-	    "E:/Program Files/Microsoft SDKs/Windows/v7.0/Include"))
+	    "D:/Program Files/Microsoft Visual Studio 10.0/VC/include"
+	    "D:/Program Files/Microsoft SDKs/Windows/v7.1A/Include"))
 
 (mapc (lambda (dir)
 		(semantic-add-system-include dir 'c++-mode)
@@ -86,8 +101,35 @@
 ;; @call "D:\Program Files\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
 ;; cl /c /EHsc /nologo /Od /Oy- /RTC1 %1 %2 %3 %4 %5 %6 %7 %8 %9
 
+;; (delete '("\\.\\(?:c\\(?:pp\\|xx\\|\\+\\+\\)?\\|CC\\)\\'" flymake-simple-make-init)
+;; 		flymake-allowed-file-name-masks)
 (add-to-list 'flymake-allowed-file-name-masks
 			 '("\\.\\(?:c\\(?:pp\\|xx\\|\\+\\+\\)?\\|CC\\)\\'" flymake-vc-init))
 (add-hook 'find-file-hook 'flymake-find-file-hook)
+
+(eval-after-load "csharp-completion"
+  '(progn
+	 (setq cscomp-assembly-search-paths
+		   (list
+			;; <<- location of .NET Framework assemblies
+			"c:\\Windows\\Microsoft.NET\\Framework\\v3.5"
+			;; "c:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319"
+			;; <<- locations of reference assemblies
+			"c:\\Program Files\\Reference Assemblies\\Microsoft\\Framework\\.NETFramework\\v3.5"
+			;; "c:\\Program Files\\Reference Assemblies\\Microsoft\\Framework\\.NETFramework\\v4.0"
+			;; <<- other assembly directories you use
+			))))
+
+(defun my-csharp-mode-fn ()
+  "my function that runs when csharp-mode is initialized for a buffer."
+  (turn-on-font-lock)
+  (turn-on-auto-revert-mode) ;; helpful when also using Visual Studio
+  (setq indent-tabs-mode nil) ;; tabs are evil
+  ;; (flymake-mode 1)
+  ;; (yas/minor-mode-on)
+  ;; (require 'rfringe)  ;; handy for flymake
+  ;; (require 'flymake-cursor) ;; also handy for flymake
+  )
+(add-hook 'csharp-mode-hook 'my-csharp-mode-fn t)
 
 (provide 'init-win32)
