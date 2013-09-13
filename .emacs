@@ -26,6 +26,7 @@
  '(py-tab-indent t)
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
+ '(semantic-c-dependency-system-include-path (quote ("D:/Program Files/Microsoft Visual Studio 10.0/VC/include" "D:/Program Files/Microsoft SDKs/Windows/v7.1A/Include" "C:/cygwin/lib/gcc/i686-pc-cygwin/4.5.3/include")))
  '(semantic-default-submodes (quote (global-semantic-highlight-func-mode global-semantic-decoration-mode global-semantic-stickyfunc-mode global-semantic-idle-completions-mode global-semantic-idle-scheduler-mode global-semanticdb-minor-mode global-semantic-idle-summary-mode global-semantic-mru-bookmark-mode global-semantic-idle-local-symbol-highlight-mode)))
  '(semantic-new-buffer-setup-functions (quote ((c-mode . semantic-default-c-setup) (c++-mode . semantic-default-c-setup) (html-mode . semantic-default-html-setup) (java-mode . wisent-java-default-setup) (js-mode . wisent-javascript-setup-parser) (scheme-mode . semantic-default-scheme-setup) (srecode-template-mode . srecode-template-setup-parser) (texinfo-mode . semantic-default-texi-setup) (makefile-automake-mode . semantic-default-make-setup) (makefile-gmake-mode . semantic-default-make-setup) (makefile-makepp-mode . semantic-default-make-setup) (makefile-bsdmake-mode . semantic-default-make-setup) (makefile-imake-mode . semantic-default-make-setup) (makefile-mode . semantic-default-make-setup))))
  '(server-mode t)
@@ -52,7 +53,10 @@
 ;; add .emacs.d to load-path
 (add-to-list 'load-path "~/.emacs.d/")
 (add-to-list 'load-path "~/.emacs.d/cedet-contrib")
+(add-to-list 'load-path "~/.emacs.d/csharp-mode")
 (add-to-list 'load-path "~/.emacs.d/icicles-ext")
+(add-to-list 'load-path "~/.emacs.d/tramp/lisp/")
+(add-to-list 'Info-default-directory-list "~/.emacs.d/tramp/info/")
 
 (load "init-build-in" 'noerror)
 (load "init-site" 'noerror)
