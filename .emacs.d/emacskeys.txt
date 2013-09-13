@@ -1,0 +1,390 @@
+C = Control
+M = Meta = Alt|Esc
+
+C-c C-a ：显示所有文字
+C-c C-t ：令所有除标题外的文字不可见
+C-c C-s ：显示当前章节的文字和子章节
+C-c C-d ：隐藏当前章节的文字和子章节
+
+* region
+M-@ ：标记区域起点
+M-h ：标记一自然段
+C-w ：删除区域
+M-y ：将上一次yank所插入的内容改为yank缓冲区中更早的记录内容
+C-x C-x ：将当前光标与标记位置交换
+M-w ：缓存区域（以便后续yank）
+C-x h ：全选当前buffer
+C-x n n :narrow-to-region
+C-x n w :widen
+
+* Buffer
+C-x 1 ：当前buffer最大化，关闭其他窗口
+C-x C-b ：列出所有缓冲区
+C-x b ：打开指定缓冲区
+C-x s ：保存所有缓冲区
+C-x C-<Left> ：前一缓冲区
+C-x C-<Right> ：下一缓冲区
+C-x k ：删除指定缓冲区
+
+
+* Fill Mode
+C-x f ：设置每行字符数
+M-q ：对本自然段重新排版
+
+M-o M-s ：本行居中
+M-o M-S ：自然段居中
+
+* Outline Mode
+C-c C-b ：前一同级章节
+C-c C-f ：后一同级章节
+
+C-c C-p ：前一章节
+C-c C-n ：后一章节
+
+C-c C-u ：上一级章节
+
+C-c C-t ：令所有除标题外的文字不可见
+C-c C-a ：显示所有文字
+C-c C-q ：令前N级的文字可见
+
+C-c C-d ：隐藏当前章节的文字和子章节
+C-c C-s ：显示当前章节的文字和子章节
+C-c TAB ：显示当前章节的直接子章节标题
+C-c C-c ：隐藏当前章节的文本
+C-c C-e ：显示光标所在位置内容
+C-c C-l ：隐藏光标所在章节的文本和子章节的文本
+C-c C-k ：显示所有子章节的标题
+
+C-c RET			outline-insert-heading
+C-c C-v			outline-move-subtree-down
+C-c C-^			outline-move-subtree-up
+C-c @			outline-mark-subtree
+C-c C-<			outline-promote
+C-c C->			outline-demote
+
+* Abbrev Mode
+C-x a l ：将当前光标之前的单词添加为当前Mode的Abbrev
+C-x a e ：展开Abbrev
+C-x ' ：展开Abbrev
+M-' ：标记Abbrev前缀
+C-x a g ：将当前光标之前的单词添加为全局的Abbrev
+C-x a n ：跳到Abbrev的下一个slot
+C-x a p ：跳到Abbrev的上一个slot
+
+* Basics
+C-x C-f "find" file i.e. open/create a file in buffer
+C-x C-s save the file
+C-x s save all files
+C-x C-w write the text to an alternate name
+C-x C-v find alternate file
+C-x C-q 修改buffer的只读属性
+C-x i insert file at cursor position
+C-x b create/switch buffers
+C-x C-b show buffer list
+C-x k kill buffer
+C-z suspend emacs
+C-x C-z：暂停emacs应用
+C-X C-c close down emacs
+C-x C-0 ：字体复原
+C-x C-- ：字体缩小
+C-x C-= ：字体增大
+M-x ：执行函数
+C-u ：指定函数参数
+C-g ：中断命令
+
+
+* Basic movement
+C-f forward char
+C-b backward char
+C-p previous line
+C-n next line
+
+M-f forward one word
+M-b backward one word
+
+C-a beginning of line
+C-e end of line
+M-a ：移动到本句开始位置
+M-e ：移动到本句结束位置
+C-j ：带缩进回车
+M-m  Back to indentation
+
+C-v one page up
+M-v scroll down one page
+C-l ：刷新屏幕并将光标所在行移到屏幕中央
+C-u 0 C-l ：刷新屏幕并将光标所在行移动到屏幕上端
+
+M-{ ：移动到前一自然段
+M-} ：移动到后一自然段
+M-< beginning of text
+M-> end of text
+
+M-x goto-line ：移动到某一行
+M-g g
+
+M-C-f  find matching brace forward
+M-C-b  find matching brace backward
+
+* Editing
+M-n repeat the following command n times
+C-u repeat the following command 4 times
+C-u n repeat n times
+C-d delete a char
+M-d delete word
+M-Del delete word backwards
+M-z ：删除到指定字符
+C-k kill line
+M-k ：从光标处删除至句尾
+C-S-<Delback> ：删除本行
+
+C-Space Set beginning mark (for region marking for example)
+C-W "kill" (delete) the marked region region
+M-W copy the marked region
+C-y "yank" (paste) the copied/killed region/line
+M-y yank earlier text (cycle through kill buffer)
+C-x C-x exchange cursor and mark
+
+C-t transpose two chars
+M-t transpose two words
+C-x C-t transpose lines
+M-u make letters uppercase in word from cursor position to end
+M-c simply make first letter in word uppercase
+M-l opposite to M-u
+C-x C-u ：区域转大写
+C-x C-l ：区域转小写
+
+* Important
+C-g quit the running/entered command
+C-x u undo previous action
+C-/ ：undo
+C-_ ：undo
+M-x revert-buffer RETURN (insert like this) undo all changes since last save
+M-x recover-file RETURN Recover text from an autosave-file
+M-x recover-session RETURN if you edited several files
+
+* Online-Help
+C-h a ：函数查找
+C-h c which command does this keystroke invoke
+C-h k which command does this keystroke invoke and what does it do?
+C-h l what were my last 100 typed keys
+C-h w what key-combo does this command have?
+C-h f what does this function do
+C-h v what's this variable and what is it's value
+C-h b show all keycommands for this buffer
+C-h t start the emacs tutorial
+C-h i start the info reader
+C-h C-k start up info reader and go to a certain key-combo point
+C-h F show the emacs FAQ
+C-h p show infos about the Elisp package on this machine
+C-h m ：当前major mode的说明
+
+* Search/Replace
+C-s Search forward
+C-r search backward
+C-g return to where search started (if you are still in search mode)
+M-% query replace
+Space or y replace this occurence
+Del or n don't replace
+. only replace this and exit (replace)
+, replace and pause (resume with Space or y)
+! replace all following occurences
+^ back to previous match
+RETURN or q quit replace
+
+
+Search/Replace with regular expressions
+Characters to use in regular expressions:
+^ beginning of line
+$ end of line
+. single char
+.* group or null of chars
+\< beginning of a word
+\> end of a word
+[] every char inside the backets (for example [a-z] means every small letter)
+
+M C-s RETURN search for regular expression forward
+M C-r RETURN search for regular expression backward
+M C-s incremental search
+C-s repeat incremental search
+M C-r incremental search backwards
+C-r repeat backwards
+M-x query-replace-regexp search and replace
+C-M-箭头 ：继续正则表达式搜索
+C-M-% ：正则表达式替换（带询问）
+
+M-s h l ：高亮显示匹配指定正则表达式的行
+M-s h r ：高亮显示匹配指定正则表达式的文本
+M-s h u ：取消指定正则表达式的高亮
+
+* Window-Commands
+C-x 2 split window vertically
+C-x o change to other window
+C-x 0 delete window
+C-x 1 close all windows except the one the cursors in
+C-x + ：平均窗口大小
+C-x ^ enlarge window
+M-x shrink-window command says it ;-)
+M C-v scroll other window
+C-x 4 f find file in other window
+C-x 4 b ：在另一窗口中打开一个buffer
+C-x 4 o change to other window
+C-x 4 0 kill buffer and window
+C-x 5 2 make new frame
+C-x 5 f find file in other frame
+C-x 5 o change to other frame
+C-x 5 0 close this frame
+C-x } 加宽当前窗口
+C-x { 压窄当前窗口
+C-x < 窗口内容右卷
+C-x > 窗口内容左卷
+<ESC> <ESC> <ESC> ：退出窗口(当Frame中窗口大于一个时）
+
+* Bookmark commands
+C-x r m set a bookmark at current cursor pos
+C-x r b jump to bookmark
+M-x bookmark-rename says it
+M-x bookmark-delete "
+M-x bookmark-save "
+C-x r l list bookmarks
+d mark bookmark for deletion
+r rename bookmark
+s save all listed bookmarks
+f show bookmark the cursor is over
+m mark bookmarks to be shown in multiple window
+v show marked bookmarks (or the one the cursor is over)
+t toggle listing of the corresponding paths
+w " path to this file
+x delete marked bookmarks
+Del ?
+q quit bookmark list
+
+
+M-x bookmark-write write all bookmarks in given file
+M-x bookmark-load load bookmark from given file
+
+* Shell
+M-x shell starts shell modus
+C-c C-c same as C-c under unix (stop running job)
+C-d delete char forward
+C-c C-d Send EOF
+C-c C-z suspend job (C-z under unix)
+M-p show previous commands
+M-n ：向后滚动历史输入记录
+C-c C-p ：光标移动到上一次输入位置
+C-c C-n ：光标移动到下一次输入位置
+C-c C-o ：清除上一次执行的输出
+C-c C-r ：光标移动到上一次执行的输出开始位置
+C-c C-u ：清空本次输入
+C-c C-s ：保存上一次执行的输出结果
+C-c 空格 ：换行但不执行（一次性执行多个命令）
+C-c . ：将历史输入作为参数插入到当前位置
+M-r ：增量搜索历史输入记录
+C-c M-r ：根据当前输入内容在历史输入中反向搜索
+C-c M-s ：根据当前输入内容在历史输入中正向搜索
+C-c C-c ：中断任务（相当于shell中的Ctrl-C）
+
+* DIRectory EDitor (dired)
+C-x d start up dired
+C (large C) copy
+d mark for erase
+D delete right away
+e or f open file or directory
+g reread directory structure from file
+G change group permissions (chgrp)
+k delete line from listing on screen (don't actually delete)
+m mark with *
+n move to next line
+o open file in other window and go there
+C-o open file in other window but don't change there
+P print file
+q quit dired
+Q do query-replace in marked files
+R rename file
+u remove mark
+v view file content
+x delete files marked with D
+z compress file
+M-Del remove all marks (whatever kind)
+~ mark backup files (name~ files) for deletion
+# mark auto-save files (#name#) for deletion
+ */ mark directory with * (C-u * removes that mark again)
+= compare this file with marked file
+M-= compare this file with it's backup file
+! apply shell command to this file
+M-} change to the next file marked with * od D
+M-{ " previous "
+% d mark files described through regular expression for deletion
+% m " (with *)
++ create directory
+> changed to next dir
+< change to previous dir
+s toggle between sorting by name or date
+
+Maybe into this category also fits this command:
+M-x speedbar starts up a separate window with a directory view
+
+* Telnet
+M-x telnet starts up telnet-modus
+C-d either delete char or send EOF
+C-c C-c stop running job (similar to C-c under unix)
+C-c C-d send EOF
+C-c C-o clear output of last command
+C-c C-z suspend execution of command
+C-c C-u kill line backwards
+M-p recall previous command
+
+* Text
+Works only in text mode
+M-s center line
+M-S center paragraph
+M-x center-region name says
+
+* Macro-commands
+C-x ( start macro definition
+C-x ) end of macro definition
+C-x e execute last definied macro
+M-n C-x e execute last defined macro n times
+M-x name-last-kbd-macro give name to macro (for saving)
+M-x insert-keyboard-macro save named macro into file
+M-x load-file load macro
+M-x macroname execute macroname
+
+* Programming
+M C-\ indent region between cursor and mark
+M-m move to first (non-space) char in this line
+M-^ attach this line to previous
+M-; formatize and indent comment
+C, C++ and Java Modes
+M-a beginning of statement
+M-e end of statement
+M C-a beginning of function
+M C-e end of function
+C-c RETURN Set cursor to beginning of function and mark at the end
+C-c C-q indent the whole function according to indention style
+C-c C-a toggle modus in which after electric signs (like {}:';./*) emacs does the indention
+C-c C-d toggle auto hungry mode in which emacs deletes groups of spaces with one del-press
+C-c C-u go to beginning of this preprocessor statement
+C-c C-c comment out marked area
+More general (I guess)
+M-x outline-minor-mode collapses function definitions in a file to a mere {...}
+M-x show-subtree If you are in one of the collapsed functions, this un-collapses it
+In order to achive some of the feats coming up now you have to run etags *.c *.h *.cpp (or what ever ending you source files have) in the source directory
+M-. (Thats Meta dot) If you are in a function call, this will take you to it's definition
+M-x tags-search ENTER Searches through all you etaged
+M-, (Meta comma) jumps to the next occurence for tags-search
+M-x tags-query-replace yum. This lets you replace some text in all the tagged files
+
+* GDB (Debugger)
+M-x gdb starts up gdm in an extra window
+
+* Version Control
+C-x v d show all registered files in this dir
+C-x v = show diff between versions
+C-x v u remove all changes since last checkin
+C-x v ~ show certain version in different window
+C-x v l print log
+C-x v i mark file for version control add
+C-x v h insert version control header into file
+C-x v r check out named snapshot
+C-x v s create named snapshot
+C-x v a create changelog file in gnu-style
