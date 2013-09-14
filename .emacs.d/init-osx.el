@@ -24,16 +24,22 @@
 (defconst cedet-osx-include-dirs
   (list "/usr/include"
 		"/usr/local/include"
-		"/opt/local/include"
-		"/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/usr/include"
-		"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include "
-		"/usr/lib/clang/4.2/include"
-		"/usr/llvm-gcc-4.2/include"))
+		"/opt/local/include"))
 
 (mapc (lambda (dir)
 		(semantic-add-system-include dir 'c++-mode)
 		(semantic-add-system-include dir 'c-mode))
 	  cedet-osx-include-dirs)
+
+(defconst cedet-clang-include-dirs
+  (list "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/usr/include"
+		"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include "
+		"/usr/lib/clang/4.2/include"
+		"/usr/llvm-gcc-4.2/include"))
+
+(mapc (lambda (dir)
+		(semantic-add-system-include dir 'objc-mode))
+	  cedet-clang-include-dirs)
 
 ;; objc-mode
 (add-to-list 'magic-mode-alist '("\\(.\\|\n\\)*\n@implementation" . objc-mode))

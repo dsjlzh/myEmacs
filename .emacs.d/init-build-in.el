@@ -525,4 +525,9 @@ the mru bookmark stack."
 			   '("melpa" . "http://melpa.milkbox.net/packages/")
 			   'APPEND))
 
+;; (package-manifest 'expand-region
+;;                   'magit
+;;                   'paredit
+;;                   'window-number)
+
 (provide 'init-build-in)

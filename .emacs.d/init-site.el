@@ -146,12 +146,12 @@
 
 ;; ropemacs
 (require 'pymacs)
-(pymacs-load "ropemacs" "rope-")
+(setq ropemacs-global-prefix "C-c C-p")
 (setq ropemacs-enable-autoimport t)
 (setq ropemacs-autoimport-modules t)
 (setq ropemacs-use-pop-to-buffer t)
 ;;(setq ropemacs-enable-shortcuts nil)
-;;(setq ropemacs-local-prefix "C-c C-p")
+(pymacs-load "ropemacs" "rope-")
 
 ;; python-mode
 (add-to-list 'load-path "~/.emacs.d/python-mode")
