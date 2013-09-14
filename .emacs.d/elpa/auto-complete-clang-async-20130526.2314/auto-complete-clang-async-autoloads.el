@@ -4,7 +4,7 @@
 
 
 ;;;### (autoloads nil nil ("auto-complete-clang-async-pkg.el" "auto-complete-clang-async.el")
-;;;;;;  (20928 27924 473481 0))
+;;;;;;  (20929 169 221000 0))
 
 ;;;***
 

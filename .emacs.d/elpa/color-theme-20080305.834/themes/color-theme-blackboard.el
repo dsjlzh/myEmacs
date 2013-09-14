@@ -22,7 +22,8 @@
      (
       ;; (background-color . "#0C1021")
       (background-color . "black")
-      (background-mode . dark)
+      ;; (background-mode . dark)
+      (background-mode . light)
       (border-color . "black")
       (cursor-color . "#A7A7A7")
       (foreground-color . "#F8F8F8")

@@ -39,6 +39,9 @@
 ;; nasl-mode
 (require 'nasl-mode)
 
+;; yara-mode
+(require 'yara-mode)
+
 ;; jdee
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/jdee/lisp"))
 (autoload 'jde-mode "jde" "JDE mode" t)
@@ -92,7 +95,6 @@
 
 ;; flymake
 (autoload 'flymake-find-file-hook "flymake" "" t)
-(add-hook 'find-file-hook 'flymake-find-file-hook)
 (setq flymake-gui-warnings-enabled nil)
 (setq flymake-log-level 0)
 
@@ -146,11 +148,11 @@
 
 ;; ropemacs
 (require 'pymacs)
-(setq ropemacs-global-prefix "C-c C-p")
 (setq ropemacs-enable-autoimport t)
 (setq ropemacs-autoimport-modules t)
 (setq ropemacs-use-pop-to-buffer t)
-;;(setq ropemacs-enable-shortcuts nil)
+(setq ropemacs-enable-shortcuts nil)
+(setq ropemacs-global-prefix "C-c C-p")
 (pymacs-load "ropemacs" "rope-")
 
 ;; python-mode
@@ -235,8 +237,20 @@
 
 (setq theme-current my-color-themes)
 (setq color-theme-is-global nil) ; Initialization
-(global-set-key [f12] 'my-theme-cycle)
+(global-set-key [M-f12] 'my-theme-cycle)
 
+(defun toggle-night-color-theme ()
+  "Switch to/from night color scheme."
+  (interactive)
+  (require 'color-theme)
+  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
+	  (color-theme-snapshot) ; restore default (light) colors
+	;; create the snapshot if necessary
+	(when (not (commandp 'color-theme-snapshot))
+	  (fset 'color-theme-snapshot (color-theme-make-snapshot)))
+	(color-theme-dark-laptop)))
+
+(global-set-key [C-f12] 'toggle-night-color-theme)
 
 ;;;; yasnippet
 (require 'yasnippet)
@@ -249,12 +263,59 @@
 (global-set-key [f9] 'ecb-toggle-ecb-windows)
 
 ;; save-visited-files
-;; (defun save-visited-files-mode-fix-ecb ()
-;;   (if (and save-visited-files-mode ecb-minor-mode)
-;; 	  (ecb-rebuild-methods-buffer)))
-
-;; (add-hook 'auto-save-hook 'save-visited-files-mode-fix-ecb)
+(setq save-visited-files-location "~/.emacs.d/emacs-visited-files")
 (turn-on-save-visited-files-mode)
+
+;; multiple-cursors
+(require 'multiple-cursors)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; iy-go-to-char
+(require 'iy-go-to-char)
+(add-to-list 'mc/cursor-specific-vars 'iy-go-to-char-start-pos)
+(global-set-key (kbd "C-c f") 'iy-go-to-char)
+(global-set-key (kbd "C-c F") 'iy-go-to-char-backward)
+(global-set-key (kbd "C-c ;") 'iy-go-to-char-continue)
+(global-set-key (kbd "C-c ,") 'iy-go-to-char-continue-backward)
+
+(require 'move-text)
+(move-text-default-bindings)
+
+;; key-combo
+;; (require 'key-combo)
+;; (key-combo-mode t)
+;; (key-combo-load-default)
+
+;; key-chord
+;; (require 'key-chord)
+;; (key-chord-mode t)
+;; (key-chord-define-global ",."     "<>\C-b")
+;; (key-chord-define-global "hj"     'undo)
+;; (key-chord-define-global [?h ?j]  'undo)  ; the same
+;; (key-chord-define-global "jk"     'dabbrev-expand)
+;; (key-chord-define-global "cv"     'reindent-then-newline-and-indent)
+;; (key-chord-define-global "4r"     "$")
+
+;; dired-single
+;; (defun my-dired-init ()
+;;   "Bunch of stuff to run for dired, either immediately or when it's
+;;    loaded."
+;;   ;; <add other stuff here>
+;;   (define-key dired-mode-map [return] 'dired-single-buffer)
+;;   (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+;;   (define-key dired-mode-map "^"
+;; 	(function
+;; 	 (lambda nil (interactive) (dired-single-buffer "..")))))
+
+;; ;; if dired's already loaded, then the keymap will be bound
+;; (if (boundp 'dired-mode-map)
+;; 	;; we're good to go; just add our bindings
+;; 	(my-dired-init)
+;;   ;; it's not loaded yet, so add our bindings to the load-hook
+;;   (add-hook 'dired-load-hook 'my-dired-init))
 
 ;; doc-mode
 ;; (add-hook 'c-mode-common-hook 'doc-mode)
