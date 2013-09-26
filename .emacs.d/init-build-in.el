@@ -64,7 +64,8 @@
 
 ;;默认进入text-mode，而不是没有什么功能的fundamental-mode
 (setq default-major-mode 'text-mode)
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 ;; turn on orgstruct
 ;; (add-hook 'text-mode-hook 'turn-on-orgstruct)
 ;; (add-hook 'text-mode-hook 'turn-on-orgtbl)
@@ -323,6 +324,15 @@ Replaces default behaviour of comment-dwim, when it inserts comment at the end o
 ;; auto-fill mode
 (global-set-key "\C-zf" `fill-region)
 
+(defun unfill-paragraph ()
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+(global-set-key "\C-zu" `unfill-paragraph)
+
+
 ;; file associate
 (add-to-list 'auto-mode-alist '("\\.idc\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("\\.mak\\'" . makefile-mode))
@@ -552,10 +562,5 @@ the mru bookmark stack."
   (add-to-list 'package-archives
 			   '("melpa" . "http://melpa.milkbox.net/packages/")
 			   'APPEND))
-
-;; (package-manifest 'expand-region
-;;                   'magit
-;;                   'paredit
-;;                   'window-number)
 
 (provide 'init-build-in)

@@ -186,8 +186,16 @@
   (local-set-key "\C-cc" 'org-capture)
   (local-set-key "\C-ca" 'org-agenda)
   (local-set-key "\C-cb" 'org-iswitchb)
+  (local-set-key "\C-cL" 'org-insert-link-global)
+  (local-set-key "\C-cO" 'org-open-at-point-global)
   ;; org-edit-special default key is conflict with icicle-occur
-  (local-set-key "\C-z'" 'org-edit-special))
+  (local-set-key "\C-z'" 'org-edit-special)
+  (eval-after-load 'org
+	'(progn
+	   (bind-key "C-TAB" 'org-cycle org-mode-map)
+	   (bind-key "C-c v" 'org-show-todo-tree org-mode-map)
+	   (bind-key "C-c C-r" 'org-refile org-mode-map)
+	   (bind-key "C-c R" 'org-reveal org-mode-map))))
 
 (add-hook 'org-mode-hook 'my-org-mode-hook)
 
@@ -283,6 +291,11 @@
 
 (require 'move-text)
 (move-text-default-bindings)
+
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+
+(require 'erc-nicklist)
 
 ;; key-combo
 ;; (require 'key-combo)
